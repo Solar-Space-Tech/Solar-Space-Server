@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 
+	db "GG-server/db"
+
 	"GG-server/middlewares"
 	"GG-server/mixin-api"
 	"github.com/gin-gonic/gin"
