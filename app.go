@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	db "GG-server/db"
+	// db "GG-server/db"
 
 	"GG-server/middlewares"
 	"GG-server/mixin-api"
@@ -24,9 +24,9 @@ func main()  {
 	})
 
 	// 接收验证码并且跳转到相应网址
-	r.GET("/me", func(c *gin.Context) {
-		code := c.Query("code")
-		return_to := c.Query("return_to")
+	r.POST("/me", func(c *gin.Context) {
+		code := c.PostForm("code")
+		return_to := c.PostForm("return_to")
 		body := oauth.Oauth(code)
 
 		ctx := context.Background()
@@ -43,5 +43,5 @@ func main()  {
 		c.Redirect(http.StatusMovedPermanently, "http://"+return_to)
 	})
 
-	r.Run()
+	r.Run(":80")
 }
