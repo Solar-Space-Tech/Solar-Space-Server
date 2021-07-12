@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	// db "GG-server/db"
+	db "GG-server/db"
 
 	"GG-server/middlewares"
 	"GG-server/mixin-api"
@@ -15,6 +15,12 @@ import (
 )
 
 func main()  {
+	user_db := db.Open_db()
+	//验证连接
+	if err := user_db.Ping(); err != nil {
+		log.Panicln(err)
+	}
+
 	r := gin.Default()
 	r.Use(middlewares.Cors())
 	r.GET("/", func(c *gin.Context) {
