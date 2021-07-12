@@ -14,5 +14,8 @@ func Open_db() *sql.DB {
 		log.Panicln(err)
 		fmt.Println(err)
 	} 
+	db.SetConnMaxLifetime(100)
+	db.SetMaxIdleConns(5)
+
 	return db;
 }
