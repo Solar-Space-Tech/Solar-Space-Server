@@ -13,6 +13,8 @@ func Insert_mixin(phone, uuid string) bool  {
         log.Panicln(err)
         return false
     }
+    defer db.Close()
+
     stmt, err := db.Prepare("INSERT usermixin SET phone=?,uuid=?")
     checkErr(err)
 
@@ -23,8 +25,6 @@ func Insert_mixin(phone, uuid string) bool  {
     checkErr(err)
 
     fmt.Println(id)
-
-    db.Close()
 
     return  true
 }
