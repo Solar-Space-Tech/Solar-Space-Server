@@ -15,12 +15,6 @@ import (
 )
 
 func main()  {
-	user_db := db.Open_db()
-	//验证连接
-	if err := user_db.Ping(); err != nil {
-		log.Panicln(err)
-	}
-
 	r := gin.Default()
 	r.Use(middlewares.Cors())
 	r.GET("/", func(c *gin.Context) {
@@ -44,7 +38,8 @@ func main()  {
 		}
 		fmt.Println("phone:", user.Phone)
 
-		//TODO: 判断是否为新用户，再或插入到数据库
+		//TODO: 判断是否为新用户
+		db.Insert_mixin(user.Phone, user.UserID)
 
 		c.Redirect(http.StatusMovedPermanently, "http://"+return_to)
 	})
