@@ -24,9 +24,9 @@ func main()  {
 	})
 
 	// 接收验证码并且跳转到相应网址
-	r.POST("/me", func(c *gin.Context) {
-		code := c.PostForm("code")
-		return_to := c.PostForm("return_to")
+	r.GET("/me", func(c *gin.Context) {
+		code := c.Query("code")
+		return_to := c.Query("return_to")
 		body := oauth.Oauth(code)
 
 		ctx := context.Background()
@@ -41,7 +41,8 @@ func main()  {
 		//TODO: 判断是否为新用户
 		db.Insert_mixin(user.Phone, user.UserID)
 
-		c.Redirect(http.StatusMovedPermanently, "http://"+return_to)
+		//跳转到 return_to,携带 access token
+		c.Redirect(http.StatusMovedPermanently, "http://"+return_to+"?access_token="+body.Get("access_token").MustString())
 	})
 
 	r.GET("/api/test/query_uuid_by_phone", func(c *gin.Context) {
