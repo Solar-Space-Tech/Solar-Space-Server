@@ -44,5 +44,11 @@ func main()  {
 		c.Redirect(http.StatusMovedPermanently, "http://"+return_to)
 	})
 
+	r.GET("/api/test/query_uuid_by_phone", func(c *gin.Context) {
+		phone := c.Query("phone")
+		c.JSON(http.StatusOK, gin.H{
+			"uuid": db.Query_uuid_by_phone(phone),
+		})
+	})
 	r.Run(":80")
 }
