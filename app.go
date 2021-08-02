@@ -4,6 +4,9 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"flag"
+	"os"
+	"encoding/json"
 	"net/http"
 
 	db "GG-server/db"
@@ -14,13 +17,33 @@ import (
 	mixin "github.com/fox-one/mixin-sdk-go"
 )
 
+
 func main()  {
+	flag.Parse()
+
+	f, err := os.Open("./keystore.json")
+	if err != nil {
+		log.Panicln(err)
+	}
+
+	var store mixin.Keystore
+	if err := json.NewDecoder(f).Decode(&store); err != nil {
+		log.Panicln(err)
+	}
+
+	client, err := mixin.NewFromKeystore(&store)
+	if err != nil {
+		log.Panicln(err)
+	}
+	fmt.Println(client)
+
 	r := gin.Default()
 	r.Use(middlewares.Cors())
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "Hello World!",
 		})
+		fmt.Println(client)
 	})
 
 	// 接收验证码并且跳转到相应网址
