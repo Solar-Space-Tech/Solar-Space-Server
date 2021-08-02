@@ -14,15 +14,10 @@ var (
 	threshold uint8 = 2
 )
 
-func Gen_multisig_payment(store mixin.Keystore, client_id, assetID, amount, memo string) string{
+func Gen_multisig_payment(c *mixin.Client, client_id, assetID, amount, memo string) string{
 
-	members = append(members, store.ClientID, client_id)
+	members = append(members, c.ClientID, client_id)
 
-	client, err := mixin.NewFromKeystore(&store)
-	if err != nil {
-		log.Panicln(err)
-	}
-	
 	ctx := mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())
 
 	amount_decimal, _ := decimal.NewFromString(amount)
@@ -41,7 +36,7 @@ func Gen_multisig_payment(store mixin.Keystore, client_id, assetID, amount, memo
 		},
 	}
 
-	payment, err := client.VerifyPayment(ctx, input)
+	payment, err := c.VerifyPayment(ctx, input)
 	if err != nil {
 		log.Panicln(err)
 	}
