@@ -24,8 +24,11 @@ func main()  {
 		log.Panicln(err)
 	}
 
-	var client_secret  = "" // 配置应用密钥
-	var store mixin.Keystore
+	var (
+		pin = "" // 配置 PIN
+		client_secret  = "" // 配置应用密钥
+		store mixin.Keystore
+	)
 	if err := json.NewDecoder(f).Decode(&store); err != nil {
 		log.Panicln(err)
 	}
@@ -84,6 +87,17 @@ func main()  {
 		var CNB = "965e5c6e-434c-3fa9-b780-c50f43cd955c"
 
 		code_id := mtg.Gen_multisig_payment(client, access_token, CNB, "10", "HI,MTG")
+
+		c.JSON(http.StatusOK, gin.H{
+			"code_id": code_id,
+		})
+	})
+
+	r.POST("/api/test/withdraw_from_multisign", func(c *gin.Context) {
+		access_token := c.PostForm("access_token")
+		var CNB = "965e5c6e-434c-3fa9-b780-c50f43cd955c"
+
+		code_id := mtg.Sign_mtg_test(client, access_token, CNB, "HI,MTG", pin)
 
 		c.JSON(http.StatusOK, gin.H{
 			"code_id": code_id,
