@@ -11,6 +11,7 @@ import (
 	db "GG-server/db"
 
 	"GG-server/middlewares"
+	"GG-server/mtg"
 	"github.com/gin-gonic/gin"
 	mixin "github.com/fox-one/mixin-sdk-go"
 )
@@ -75,6 +76,17 @@ func main()  {
 		phone := c.Query("phone")
 		c.JSON(http.StatusOK, gin.H{
 			"uuid": db.Query_uuid_by_phone(phone),
+		})
+	})
+
+	r.POST("/api/test/deposit_to_multisign", func(c *gin.Context) {
+		access_token := c.PostForm("access_token")
+		var CNB = "965e5c6e-434c-3fa9-b780-c50f43cd955c"
+
+		code_id := mtg.Gen_multisig_payment(client, access_token, CNB, "10", "HI,MTG")
+
+		c.JSON(http.StatusOK, gin.H{
+			"code_id": code_id,
 		})
 	})
 	r.Run(":80")
