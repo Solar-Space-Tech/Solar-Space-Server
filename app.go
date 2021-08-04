@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"flag"
 	"os"
 	"encoding/json"
 	"net/http"
@@ -19,13 +18,14 @@ import (
 
 
 func main()  {
-	flag.Parse()
-
+	// 读取配置文件
 	f, err := os.Open("./keystore.json")
 	if err != nil {
 		log.Panicln(err)
 	}
 
+	var client_secret string
+	client_secret = "" // 配置应用密钥
 	var store mixin.Keystore
 	if err := json.NewDecoder(f).Decode(&store); err != nil {
 		log.Panicln(err)
@@ -36,6 +36,8 @@ func main()  {
 		log.Panicln(err)
 	}
 	fmt.Println(client)
+
+	ctx := context.Background()
 
 	r := gin.Default()
 	r.Use(middlewares.Cors())
@@ -50,12 +52,15 @@ func main()  {
 	r.GET("/me", func(c *gin.Context) {
 		code := c.Query("code")
 		return_to := c.Query("return_to")
-		body := oauth.Oauth(code)
-
+		// body := oauth.Oauth(code)
+		token, _, err := mixin.AuthorizeToken(ctx, store.ClientID, client_secret, code, "")
+		if err != nil {
+			log.Printf("AuthorizeToken: %v, err")
+		}
 		ctx := context.Background()
 
 		//获取用户信息
-		user, err := mixin.UserMe(ctx, body.Get("access_token").MustString())
+		user, err := mixin.UserMe(ctx, token)
 		if err != nil {
 			log.Panicln("err:", err)
 		}
@@ -65,7 +70,7 @@ func main()  {
 		db.Insert_mixin(user.Phone, user.UserID)
 
 		//跳转到 return_to,携带 access token
-		c.Redirect(http.StatusMovedPermanently, "http://"+return_to+"?access_token="+body.Get("access_token").MustString())
+		c.Redirect(http.StatusMovedPermanently, "http://"+return_to+"?access_token="+token)
 	})
 
 	r.GET("/api/test/query_uuid_by_phone", func(c *gin.Context) {
