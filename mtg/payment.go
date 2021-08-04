@@ -17,9 +17,10 @@ var (
 	threshold uint8 = 2
 )
 
-func Gen_multisig_payment(c *mixin.Client, client_id, assetID, amount, memo string) (string) {
+func Gen_multisig_payment(c *mixin.Client, access_token, assetID, amount, memo string) (string) {
+	user := mixin.NewFromAccessToken(access_token)
 
-	members = append(members, c.ClientID, client_id)
+	members = append(members, c.ClientID, user.ClientID)
 
 	ctx := mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())
 
@@ -64,7 +65,7 @@ func Sign_mtg_test(c *mixin.Client, access_token , assetID, memo, pin string) (s
 
 		for _, output := range outputs {
 			offset = output.UpdatedAt
-			if hex.EncodeToString([]byte(output.AssetID)) == assetID {
+			if hex.EncodeToString([]byte(output.AssetID)) == assetID { // 判断币种
 				utxo = output
 				break
 			}
@@ -114,6 +115,7 @@ func Sign_mtg_test(c *mixin.Client, access_token , assetID, memo, pin string) (s
 	}
 	fmt.Println(req)
 
+	//用户，生成签名请求
 	re, err := c.CreateMultisig(ctx, mixin.MultisigActionSign, raw)
 	if err != nil {
 		log.Panicf("CreateMultisig: sign %v", err)
