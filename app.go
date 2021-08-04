@@ -11,7 +11,6 @@ import (
 	db "GG-server/db"
 
 	"GG-server/middlewares"
-	"GG-server/mixin-api"
 	"github.com/gin-gonic/gin"
 	mixin "github.com/fox-one/mixin-sdk-go"
 )
@@ -24,8 +23,7 @@ func main()  {
 		log.Panicln(err)
 	}
 
-	var client_secret string
-	client_secret = "" // 配置应用密钥
+	var client_secret  = "" // 配置应用密钥
 	var store mixin.Keystore
 	if err := json.NewDecoder(f).Decode(&store); err != nil {
 		log.Panicln(err)
@@ -55,7 +53,7 @@ func main()  {
 		// body := oauth.Oauth(code)
 		token, _, err := mixin.AuthorizeToken(ctx, store.ClientID, client_secret, code, "")
 		if err != nil {
-			log.Printf("AuthorizeToken: %v, err")
+			log.Printf("AuthorizeToken: %v", err)
 		}
 		ctx := context.Background()
 
