@@ -72,7 +72,7 @@ func main()  {
 		db.Insert_mixin(user.Phone, user.UserID)
 
 		//跳转到 return_to,携带 access token
-		c.Redirect(http.StatusMovedPermanently, "http://"+return_to+"?access_token="+token)
+		c.Redirect(http.StatusMovedPermanently, "https://"+return_to+"/#/?access_token="+token)
 	})
 
 	r.GET("/api/test/query_uuid_by_phone", func(c *gin.Context) {
