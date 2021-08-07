@@ -13,13 +13,13 @@ import (
 )
 
 var (
-	members = []string{}
 	threshold uint8 = 2
 )
-
-func Gen_multisig_payment(c *mixin.Client, access_token, assetID, amount, memo string) (string) {
+//
+func MTG_payment_test(c *mixin.Client, access_token, assetID, amount, memo string) (string) {
 	user := mixin.NewFromAccessToken(access_token)
 
+	var members = []string{}
 	members = append(members, c.ClientID, user.ClientID)
 
 	ctx := mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())
@@ -47,10 +47,14 @@ func Gen_multisig_payment(c *mixin.Client, access_token, assetID, amount, memo s
 	return payment.CodeID
 }
 
-func Sign_mtg_test(c *mixin.Client, access_token , assetID, memo, pin string) (string) {
+
+func MTG_sing_test(c *mixin.Client, access_token , assetID, memo, pin string) (string) {
 	ctx := mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())
 	// 读取用户
 	user := mixin.NewFromAccessToken(access_token)
+
+	var members = []string{}
+	members = append(members, c.ClientID, user.ClientID)
 
 	var (
 		utxo   *mixin.MultisigUTXO
