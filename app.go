@@ -16,11 +16,6 @@ import (
 	mixin "github.com/fox-one/mixin-sdk-go"
 )
 
-type Pin_client_secret struct {
-	Pin			string `json:"pin"`
-	Client_secret string `json:"client_secret"`
-}
-
 func main()  {
 	// 读取配置文件
 	f_keystore, err := os.Open("./keystore.json")
@@ -33,7 +28,10 @@ func main()  {
 	}
 
 	var (
-		pcs Pin_client_secret
+		pcs struct {
+			Pin				string `json:"pin"`
+			Client_secret 	string `json:"client_secret"`
+		}
 		store mixin.Keystore
 	)
 	if err := json.NewDecoder(f_pcs).Decode(&pcs); err != nil {
