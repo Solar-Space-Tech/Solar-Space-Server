@@ -16,20 +16,30 @@ import (
 	mixin "github.com/fox-one/mixin-sdk-go"
 )
 
+type Pin_client_secret struct {
+	Pin			string `json:"pin"`
+	Client_secret string `json:"client_secret"`
+}
 
 func main()  {
 	// 读取配置文件
-	f, err := os.Open("./keystore.json")
+	f_keystore, err := os.Open("./keystore.json")
+	if err != nil {
+		log.Panicln(err)
+	}
+	f_pcs, err := os.Open("./pin&client_secret.json")
 	if err != nil {
 		log.Panicln(err)
 	}
 
 	var (
-		pin = "" // 配置 PIN
-		client_secret  = "" // 配置应用密钥
+		pcs Pin_client_secret
 		store mixin.Keystore
 	)
-	if err := json.NewDecoder(f).Decode(&store); err != nil {
+	if err := json.NewDecoder(f_pcs).Decode(&pcs); err != nil {
+		log.Panicln(err)		
+	}
+	if err := json.NewDecoder(f_keystore).Decode(&store); err != nil {
 		log.Panicln(err)
 	}
 
@@ -55,7 +65,7 @@ func main()  {
 		code := c.Query("code")
 		return_to := c.Query("return_to")
 		// body := oauth.Oauth(code)
-		token, _, err := mixin.AuthorizeToken(ctx, store.ClientID, client_secret, code, "")
+		token, _, err := mixin.AuthorizeToken(ctx, store.ClientID, pcs.Client_secret, code, "")
 		if err != nil {
 			log.Printf("AuthorizeToken: %v", err)
 		}
@@ -97,7 +107,7 @@ func main()  {
 		access_token := c.PostForm("access_token")
 		var CNB = "965e5c6e-434c-3fa9-b780-c50f43cd955c"
 
-		code_id := mtg.Sign_mtg_test(client, access_token, CNB, "HI,MTG", pin)
+		code_id := mtg.Sign_mtg_test(client, access_token, CNB, "HI,MTG", pcs.Pin)
 
 		c.JSON(http.StatusOK, gin.H{
 			"code_id": code_id,
