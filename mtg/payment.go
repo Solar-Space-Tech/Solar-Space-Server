@@ -87,7 +87,7 @@ func Sign_mtg_test(c *mixin.Client, access_token , assetID, memo, pin string) (s
 	Outputs: []mixin.TransactionOutput{
 		{
 			Receivers: []string{user.ClientID}, // 用户收币
-			Threshold: 1,
+			Threshold: 2,
 			Amount:    amount,
 		},
 	},
