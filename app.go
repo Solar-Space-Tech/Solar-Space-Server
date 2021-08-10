@@ -94,7 +94,7 @@ func main()  {
 		access_token := c.PostForm("access_token")
 		var CNB = "965e5c6e-434c-3fa9-b780-c50f43cd955c"
 
-		code_id := mtg.Gen_multisig_payment(client, access_token, CNB, "10", "HI,MTG")
+		code_id := mtg.MTG_payment_test(client, access_token, CNB, "10", "HI,MTG")
 
 		c.JSON(http.StatusOK, gin.H{
 			"code_id": code_id,
@@ -105,7 +105,7 @@ func main()  {
 		access_token := c.PostForm("access_token")
 		var CNB = "965e5c6e-434c-3fa9-b780-c50f43cd955c"
 
-		code_id := mtg.Sign_mtg_test(client, access_token, CNB, "HI,MTG", pcs.Pin)
+		code_id := mtg.MTG_sing_test(client, access_token, CNB, "HI,MTG", pcs.Pin)
 
 		c.JSON(http.StatusOK, gin.H{
 			"code_id": code_id,
