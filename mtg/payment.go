@@ -111,7 +111,7 @@ func MTG_sing_test(c *mixin.Client, access_token , assetID, memo, pin string) (s
 	}
 
 	//用户，生成签名请求
-	re, err := c.CreateMultisig(ctx, mixin.MultisigActionSign, raw)
+	re, err := client.CreateMultisig(ctx, mixin.MultisigActionSign, raw)
 	if err != nil {
 		log.Panicf("CreateMultisig: sign %v", err)
 	}
