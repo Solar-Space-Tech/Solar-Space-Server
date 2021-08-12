@@ -2,8 +2,6 @@ package mtg
 
 import (
 	"context"
-	"encoding/hex"
-	"fmt"
 	"log"
 	"time"
 
@@ -60,7 +58,6 @@ func MTG_sing_test(c *mixin.Client, access_token , assetID, memo, pin string) (s
 	}
 
 	members := []string{c.ClientID, user.UserID}
-	fmt.Println("members: %v", members)
 
 	var (
 		utxo   *mixin.MultisigUTXO
@@ -75,7 +72,7 @@ func MTG_sing_test(c *mixin.Client, access_token , assetID, memo, pin string) (s
 
 		for _, output := range outputs {
 			offset = output.UpdatedAt
-			if hex.EncodeToString([]byte(output.AssetID)) == assetID { // 判断币种
+			if output.AssetID == assetID { // 判断币种
 				utxo = output
 				break
 			}
