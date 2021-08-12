@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	threshold uint8 = 2
+	threshold uint8 = 1
 )
 //
 func MTG_payment_test(c *mixin.Client, access_token, assetID, amount, memo string) (string) {
@@ -97,7 +97,7 @@ func MTG_sing_test(c *mixin.Client, access_token , assetID, memo, pin string) (s
 	Outputs: []mixin.TransactionOutput{
 		{
 			Receivers: []string{user.UserID}, // 用户收币
-			Threshold: 2,
+			Threshold: threshold,
 			Amount:    amount,
 		},
 	},
@@ -112,18 +112,6 @@ func MTG_sing_test(c *mixin.Client, access_token , assetID, memo, pin string) (s
 	if err != nil {
 		log.Panicf("DumpTransaction: %v", err)
 	}
-
-	// 机器人，生成签名请求
-	req, err := c.CreateMultisig(ctx, mixin.MultisigActionSign, raw)
-	if err != nil {
-		log.Panicf("CreateMultisig: sign %v", err)
-	}
-	// 机器人，签名
-	req, err = c.SignMultisig(ctx, req.RequestID, pin)
-	if err != nil {
-		log.Panicf("CreateMultisig: %v", err)
-	}
-	fmt.Println(req)
 
 	//用户，生成签名请求
 	re, err := c.CreateMultisig(ctx, mixin.MultisigActionSign, raw)
