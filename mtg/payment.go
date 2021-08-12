@@ -17,12 +17,12 @@ var (
 )
 //
 func MTG_payment_test(c *mixin.Client, access_token, assetID, amount, memo string) (string) {
-	user := mixin.NewFromAccessToken(access_token)
+	ctx := mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())
+	user, _ := mixin.NewFromAccessToken(access_token).UserMe(ctx)
 
 	members := []string{}
-	members = append(members, c.ClientID, user.ClientID)
+	members = append(members, c.ClientID, user.UserID)
 
-	ctx := mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())
 
 	amount_decimal, _ := decimal.NewFromString(amount)
 	input := mixin.TransferInput{
