@@ -52,10 +52,14 @@ func MTG_payment_test(c *mixin.Client, access_token, assetID, amount, memo strin
 func MTG_sing_test(c *mixin.Client, access_token , assetID, memo, pin string) (string) {
 	ctx := mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())
 	// 读取用户
-	user := mixin.NewFromAccessToken(access_token)
+	client := mixin.NewFromAccessToken(access_token)
 
-	members := []string{}
-	members = append(members, c.ClientID, user.ClientID)
+	user, err := mixin.UserMe(ctx, access_token)
+	if err != nil {
+		log.Panicln("err:", err)
+	}
+
+	members := []string{c.ClientID, user.UserID}
 
 	var (
 		utxo   *mixin.MultisigUTXO
@@ -63,7 +67,7 @@ func MTG_sing_test(c *mixin.Client, access_token , assetID, memo, pin string) (s
 	)
 	const limit = 10
 	for utxo == nil {
-		outputs, err := user.ReadMultisigOutputs(ctx, members, threshold, offset, limit)
+		outputs, err := client.ReadMultisigOutputs(ctx, members, threshold, offset, limit)
 		if err != nil {
 			log.Panicf("ReadMultisigOutputs: %v", err)
 		}
@@ -91,7 +95,7 @@ func MTG_sing_test(c *mixin.Client, access_token , assetID, memo, pin string) (s
 	Inputs: []*mixin.MultisigUTXO{utxo},
 	Outputs: []mixin.TransactionOutput{
 		{
-			Receivers: []string{user.ClientID}, // 用户收币
+			Receivers: []string{user.UserID}, // 用户收币
 			Threshold: 2,
 			Amount:    amount,
 		},
