@@ -23,7 +23,7 @@ func MTG_payment_test(c *mixin.Client, access_token, assetID, amount, memo strin
 		log.Panicln("err:", err)
 	}
 
-	members := []string{c.ClientID, user.UserID}
+	members := []string{user.UserID}
 
 	amount_decimal, _ := decimal.NewFromString(amount)
 	input := mixin.TransferInput{
@@ -60,6 +60,7 @@ func MTG_sing_test(c *mixin.Client, access_token , assetID, memo, pin string) (s
 	}
 
 	members := []string{c.ClientID, user.UserID}
+	fmt.Println("members: %v", members)
 
 	var (
 		utxo   *mixin.MultisigUTXO
