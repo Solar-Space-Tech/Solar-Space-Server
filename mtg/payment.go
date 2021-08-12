@@ -54,7 +54,7 @@ func MTG_sing_test(c *mixin.Client, access_token , assetID, memo, pin string) (s
 	// 读取用户
 	client := mixin.NewFromAccessToken(access_token)
 
-	user, err := mixin.UserMe(ctx, access_token)
+	user, err := client.UserMe(ctx)
 	if err != nil {
 		log.Panicln("err:", err)
 	}
@@ -88,7 +88,7 @@ func MTG_sing_test(c *mixin.Client, access_token , assetID, memo, pin string) (s
 		log.Panicln("No Unspent UTXO")
 	}
 
-	amount := utxo.Amount.Truncate(8)
+	amount := utxo.Amount.Div(decimal.NewFromFloat(2)).Truncate(8)
 
 	tx, err := c.MakeMultisigTransaction(ctx, &mixin.TransactionInput{
 	Memo:   "multisig test",
