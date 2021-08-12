@@ -9,7 +9,7 @@ import (
 
 	"github.com/fox-one/mixin-sdk-go"
 	"github.com/fox-one/pkg/uuid"
-	"github.com/shopspring/decimal"
+	// "github.com/shopspring/decimal"
 )
 
 var (
@@ -23,32 +23,35 @@ func MTG_payment_test(c *mixin.Client, access_token, assetID, amount, memo strin
 		log.Println("UserMe: %v", err)
 	}
 
-	members := []string{c.ClientID}
-	members = append(members, user.UserID)
+	fmt.Println("UserME: %v", user.UserID)
+	return user.UserID
 
-	ctx = mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())
+	// members := []string{c.ClientID}
+	// members = append(members, user.UserID)
 
-	amount_decimal, _ := decimal.NewFromString(amount)
-	input := mixin.TransferInput{
-		AssetID: assetID, 
-		// AssetID: "965e5c6e-434c-3fa9-b780-c50f43cd955c",
-		Amount:  amount_decimal, 
-		TraceID: uuid.New(),
-		Memo:    memo,
-		OpponentMultisig: struct {
-			Receivers []string `json:"receivers,omitempty"`
-			Threshold uint8    `json:"threshold,omitempty"`
-		}{
-			Receivers: members,
-			Threshold: threshold,
-		},
-	}
+	// ctx = mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())
 
-	payment, err := c.VerifyPayment(ctx, input)
-	if err != nil {
-		log.Panicln(err)
-	}
-	return payment.CodeID
+	// amount_decimal, _ := decimal.NewFromString(amount)
+	// input := mixin.TransferInput{
+	// 	AssetID: assetID, 
+	// 	// AssetID: "965e5c6e-434c-3fa9-b780-c50f43cd955c",
+	// 	Amount:  amount_decimal, 
+	// 	TraceID: uuid.New(),
+	// 	Memo:    memo,
+	// 	OpponentMultisig: struct {
+	// 		Receivers []string `json:"receivers,omitempty"`
+	// 		Threshold uint8    `json:"threshold,omitempty"`
+	// 	}{
+	// 		Receivers: members,
+	// 		Threshold: threshold,
+	// 	},
+	// }
+
+	// payment, err := c.VerifyPayment(ctx, input)
+	// if err != nil {
+	// 	log.Panicln(err)
+	// }
+	// return payment.CodeID
 }
 
 
