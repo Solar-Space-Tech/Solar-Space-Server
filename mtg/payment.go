@@ -19,7 +19,7 @@ var (
 func MTG_payment_test(c *mixin.Client, access_token, assetID, amount, memo string) (string) {
 	user := mixin.NewFromAccessToken(access_token)
 
-	var members = []string{}
+	members := []string{}
 	members = append(members, c.ClientID, user.ClientID)
 
 	ctx := mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())
@@ -53,7 +53,7 @@ func MTG_sing_test(c *mixin.Client, access_token , assetID, memo, pin string) (s
 	// 读取用户
 	user := mixin.NewFromAccessToken(access_token)
 
-	var members = []string{}
+	members := []string{}
 	members = append(members, c.ClientID, user.ClientID)
 
 	var (
