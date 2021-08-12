@@ -23,7 +23,7 @@ func MTG_payment_test(c *mixin.Client, access_token, assetID, amount, memo strin
 		log.Panicln("err:", err)
 	}
 
-	members := []string{user.UserID}
+	members := []string{c.ClientID, user.UserID}
 
 	amount_decimal, _ := decimal.NewFromString(amount)
 	input := mixin.TransferInput{
