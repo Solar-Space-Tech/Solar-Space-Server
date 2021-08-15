@@ -15,7 +15,7 @@ func Insert_mixin(phone, uuid, name string) bool  {
     }
     defer db.Close()
 
-    stmt, err := db.Prepare("INSERT usermixin SET phone=?,uuid=?,name=?")
+    stmt, err := db.Prepare("INSERT users SET phone=?,uuid=?,name=?")
     checkErr(err)
 
     res, err := stmt.Exec(phone, uuid, name)

@@ -13,7 +13,7 @@ func Query_uuid_by_phone(phone string) string {
     }
     defer db.Close()
 
-	rows, err := db.Query("SELECT phone, uuid FROM usermixin")
+	rows, err := db.Query("SELECT phone, uuid FROM users")
     checkErr(err)
 	
 	for rows.Next() {
