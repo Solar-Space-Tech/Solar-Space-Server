@@ -76,9 +76,10 @@ func main()  {
 		}
 		fmt.Println("phone:", user.Phone)
 
-		//TODO: 判断是否为新用户
-
-		db.Insert_mixin(user.Phone, user.UserID, user.FullName)
+		// 判断是否为新用户
+		if !db.If_old_user(user.UserID, user.Phone) {
+			db.Insert_mixin(user.Phone, user.UserID, user.FullName)
+		}
 
 		//跳转到 return_to,携带 access token
 		c.Redirect(http.StatusMovedPermanently, "https://"+return_to+"/#/?access_token="+token)
