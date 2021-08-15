@@ -4,8 +4,9 @@ import (
 	"context"
 	"log"
 	"time"
-
+	"encoding/base64"
 	"github.com/fox-one/mixin-sdk-go"
+	"github.com/fox-one/msgpack"
 	"github.com/fox-one/pkg/uuid"
 	"github.com/shopspring/decimal"
 )
@@ -13,7 +14,14 @@ import (
 var (
 	threshold uint8 = 1
 )
-//
+
+type Order struct {
+	A string `json:"a"`
+	C string `json:"c"`
+	M string `json:"m"`
+	T string `json:"t"`
+}
+
 func MTG_payment_test(c *mixin.Client, access_token, assetID, amount, memo string) (string) {
 	ctx := mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())
 	user, err := mixin.UserMe(ctx, access_token)
@@ -117,4 +125,13 @@ func MTG_sing_test(c *mixin.Client, access_token , assetID, memo, pin string) (s
 	}
 
 	return re.CodeID
+}
+
+func MTG_payment(c *mixin.Client, access_token, memo string) {
+	// 解码 memo
+	parsedpack, _ := base64.StdEncoding.DecodeString(memo)
+	order_memo := Order{}
+	_ = msgpack.Unmarshal(parsedpack, &order_memo)
+	// TODO: 判断 memo 是否有效
+	// TODO: 如果有效则存入数据库
 }
