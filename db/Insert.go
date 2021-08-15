@@ -7,7 +7,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func Insert_mixin(phone, uuid string) bool  {
+func Insert_mixin(phone, uuid, name string) bool  {
     db := Open_db()
     if err := db.Ping(); err != nil {
         log.Panicln(err)
@@ -15,10 +15,10 @@ func Insert_mixin(phone, uuid string) bool  {
     }
     defer db.Close()
 
-    stmt, err := db.Prepare("INSERT usermixin SET phone=?,uuid=?")
+    stmt, err := db.Prepare("INSERT usermixin SET phone=?,uuid=?,name=?")
     checkErr(err)
 
-    res, err := stmt.Exec(phone, uuid)
+    res, err := stmt.Exec(phone, uuid, name)
     checkErr(err)
 
     id, err := res.LastInsertId()
