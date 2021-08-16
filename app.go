@@ -113,5 +113,12 @@ func main()  {
 			"code_id": code_id,
 		})
 	})
+
+	r.POST("/api/test/deposit_to_multisign1111", func(c *gin.Context) {
+		access_token := c.PostForm("access_token")
+		c.JSON(http.StatusOK, gin.H{
+			"code_id": access_token,
+		})
+	})
 	r.Run(":8080")
 }
