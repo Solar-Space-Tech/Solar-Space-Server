@@ -27,7 +27,7 @@ func MTG_payment_test(c *mixin.Client, access_token, assetID, amount, memo strin
 	ctx := mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())
 	user, err := mixin.UserMe(ctx, access_token)
 	if err != nil {
-		log.Panicln("err:", err)
+		log.Panicln("err:", err, access_token)
 	}
 
 	members := []string{c.ClientID, user.UserID}
