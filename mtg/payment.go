@@ -3,7 +3,6 @@ package mtg
 import (
 	"context"
 	"log"
-	"fmt"
 	"time"
 	"encoding/base64"
 	"github.com/fox-one/mixin-sdk-go"
