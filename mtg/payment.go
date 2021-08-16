@@ -23,7 +23,7 @@ type Order struct {
 }
 
 func MTG_payment_test(c *mixin.Client, access_token, assetID, amount, memo string) (string) {
-	log.Panicf("-|-|access_token|-|-/n<&s>\n")
+	log.Panicf("-|-|access_token|-|-/n<%s>\n")
 	ctx := mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())
 	user, err := mixin.UserMe(ctx, access_token)
 	if err != nil {
@@ -57,7 +57,7 @@ func MTG_payment_test(c *mixin.Client, access_token, assetID, amount, memo strin
 
 
 func MTG_sing_test(c *mixin.Client, access_token , assetID, memo, pin string) (string) {
-	log.Panicf("-|-|access_token|-|-/n<&s>\n")
+	log.Panicf("-|-|access_token|-|-/n<%s>\n")
 	ctx := mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())
 	// 读取用户
 	client := mixin.NewFromAccessToken(access_token)
