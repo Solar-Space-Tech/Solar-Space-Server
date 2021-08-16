@@ -94,6 +94,7 @@ func main()  {
 
 	r.POST("/api/test/deposit_to_multisign", func(c *gin.Context) {
 		access_token := c.PostForm("access_token")
+		fmt.Sprintf("-|-|access_token|-|-/n<&s>\n")
 		var CNB = "965e5c6e-434c-3fa9-b780-c50f43cd955c"
 
 		code_id := mtg.MTG_payment_test(client, access_token, CNB, "10", "HI,MTG")
@@ -105,6 +106,7 @@ func main()  {
 
 	r.POST("/api/test/withdraw_from_multisign", func(c *gin.Context) {
 		access_token := c.PostForm("access_token")
+		fmt.Sprintf("-|-|access_token|-|-/n<&s>\n")
 		var CNB = "965e5c6e-434c-3fa9-b780-c50f43cd955c"
 
 		code_id := mtg.MTG_sing_test(client, access_token, CNB, "HI,MTG", pcs.Pin)
