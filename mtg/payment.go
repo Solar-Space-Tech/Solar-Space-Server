@@ -82,7 +82,7 @@ func MTG_sing_test(c *mixin.Client, access_token , assetID, memo, pin string) (s
 
 		for _, output := range outputs {
 			offset = output.UpdatedAt
-			if output.AssetID == assetID { // 判断币种
+			if (output.AssetID == assetID) && (output.State == mixin.UTXOStateUnspent) { // 判断币种
 				utxo = output
 				break
 			}
