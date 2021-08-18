@@ -114,11 +114,16 @@ func main()  {
 		})
 	})
 
-	r.POST("/api/test/deposit_to_multisign1111", func(c *gin.Context) {
-		access_token := c.PostForm("access_token")
+	r.POST("/api/test/decode_memo", func(c *gin.Context) {
+		memo := c.PostForm("memo")
+		decoded_memo := mtg.Unpack_memo(memo)
 		c.JSON(http.StatusOK, gin.H{
-			"code_id": access_token,
+			"a": decoded_memo.A,
+			"c": decoded_memo.C,
+			"m": decoded_memo.M,
+			"t": decoded_memo.T,
 		})
 	})
+
 	r.Run(":8080")
 }

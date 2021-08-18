@@ -22,6 +22,17 @@ type Order struct {
 	T string `json:"t"`
 }
 
+func Unpack_memo(memo string) Order {
+	// 解码 memo
+	parsedpack, _ := base64.StdEncoding.DecodeString(memo)
+	order_memo := Order{}
+	_ = msgpack.Unmarshal(parsedpack, &order_memo)
+	// TODO: 判断 memo 是否有效
+	// TODO: 如果有效则存入数据库
+
+	return order_memo
+}
+
 func MTG_payment_test(c *mixin.Client, access_token, assetID, amount, memo string) (string) {
 	// log.Panicf("-|-|access_token|-|-/n<%s>\n",access_token)
 	ctx := mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())
@@ -127,13 +138,4 @@ func MTG_sing_test(c *mixin.Client, access_token , assetID, memo, pin string) (s
 	}
 
 	return re.CodeID
-}
-
-func MTG_payment(c *mixin.Client, access_token, memo string) {
-	// 解码 memo
-	parsedpack, _ := base64.StdEncoding.DecodeString(memo)
-	order_memo := Order{}
-	_ = msgpack.Unmarshal(parsedpack, &order_memo)
-	// TODO: 判断 memo 是否有效
-	// TODO: 如果有效则存入数据库
 }
