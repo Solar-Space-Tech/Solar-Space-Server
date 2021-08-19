@@ -17,10 +17,11 @@ var (
 )
 
 type Order struct {
-	A uuid2.UUID 
-	C string 
-	M string 
-	T string 
+	A uuid2.UUID `json:"a,omitempty" msgpack:"a,omitempty`
+	C string `json:"c,omitempty" msgpack:"c,omitempty`
+	M string `json:"m,omitempty" msgpack:"m,omitempty`
+	T string `json:"t,omitempty" msgpack:"t,omitempty`
+
 }
 
 func Pack_memo(a, c, m, t string) string {
