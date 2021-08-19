@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 	"encoding/base64"
+	uuid2 "github.com/satori/go.uuid"
 	"github.com/fox-one/mixin-sdk-go"
 	"github.com/fox-one/msgpack"
 	"github.com/fox-one/pkg/uuid"
@@ -16,7 +17,7 @@ var (
 )
 
 type Order struct {
-	A string `json:"a"`
+	A uuid2.UUID `json:"a"`
 	C string `json:"c"`
 	M string `json:"m"`
 	T string `json:"t"`
