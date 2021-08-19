@@ -7,7 +7,7 @@ import (
 	"encoding/base64"
 	uuid2 "github.com/satori/go.uuid"
 	"github.com/fox-one/mixin-sdk-go"
-	"github.com/fox-one/msgpack"
+	"github.com/vmihailenco/msgpack"
 	"github.com/fox-one/pkg/uuid"
 	"github.com/shopspring/decimal"
 )
