@@ -131,10 +131,10 @@ func main()  {
 		decoded_memo := mtg.Unpack_memo(memo)
 		fmt.Printf("%+v\n", decoded_memo)
 		c.JSON(http.StatusOK, gin.H{
-			"a": decoded_memo.A,
-			"c": decoded_memo.C,
-			"m": decoded_memo.M,
-			"t": decoded_memo.T,
+			"a": decoded_memo.AssetID,
+			"c": decoded_memo.Action,
+			"m": decoded_memo.Amount,
+			"t": decoded_memo.TimeLimit,
 		})
 	})
 

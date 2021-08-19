@@ -19,22 +19,28 @@ var (
 )
 
 type Order struct {
-	A uuid2.UUID `json:"a,omitempty" msgpack:"a,omitempty`
-	C string `json:"c,omitempty" msgpack:"c,omitempty`
-	M string `json:"m,omitempty" msgpack:"m,omitempty`
-	T string `json:"t,omitempty" msgpack:"t,omitempty`
+	AssetID uuid2.UUID `json:"a,omitempty" msgpack:"a,omitempty`
+	Action string `json:"c,omitempty" msgpack:"c,omitempty`
+	Amount string `json:"m,omitempty" msgpack:"m,omitempty`
+	TimeLimit string `json:"t,omitempty" msgpack:"t,omitempty`
 
 }
 
 func Pack_memo(a, c, m, t string) string {
 	packUuid, _ := uuid2.FromString(a)
-	pack, _ := msgpack.Marshal(Order{A: packUuid, C: c, M: m, T: t,})
+	n := Order{
+		AssetID: packUuid,
+		Action: c,
+		Amount: m,
+		TimeLimit: t,
+	}
+	pack, _ := msgpack.Marshal(n)
 	memo := base64.StdEncoding.EncodeToString(pack)
 	return memo
 }
 func Unpack_memo(memo string) Order {
 	// 解码 memo
-	parsedpack, _ := base64.StdEncoding.DecodeString(memo)
+	parsedpack, _ := base64.RawURLEncoding.DecodeString(memo)
 	order_memo := Order{}
 	err := msgpack.Unmarshal(parsedpack, &order_memo)
 	if err != nil {
