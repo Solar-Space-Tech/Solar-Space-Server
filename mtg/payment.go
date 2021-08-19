@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 	"encoding/base64"
-	// uuid2 "github.com/satori/go.uuid"
+	uuid2 "github.com/satori/go.uuid"
 	"github.com/fox-one/mixin-sdk-go"
 	"github.com/vmihailenco/msgpack"
 	"github.com/fox-one/pkg/uuid"
@@ -17,14 +17,15 @@ var (
 )
 
 type Order struct {
-	A string 
+	A uuid2.UUID 
 	C string 
 	M string 
 	T string 
 }
 
 func Pack_memo(a, c, m, t string) string {
-	pack, _ := msgpack.Marshal(Order{A: a, C: c, M: m, T: t,})
+	packUuid, _ := uuid2.FromString(a)
+	pack, _ := msgpack.Marshal(Order{A: packUuid, C: c, M: m, T: t,})
 	memo := base64.StdEncoding.EncodeToString(pack)
 	return memo
 }
@@ -32,7 +33,10 @@ func Unpack_memo(memo string) Order {
 	// 解码 memo
 	parsedpack, _ := base64.StdEncoding.DecodeString(memo)
 	order_memo := Order{}
-	_ = msgpack.Unmarshal(parsedpack, &order_memo)
+	err := msgpack.Unmarshal(parsedpack, &order_memo)
+	if err != nil {
+		log.Panicln(err)
+	}
 	// TODO: 判断 memo 是否有效
 	// TODO: 如果有效则存入数据库
 
