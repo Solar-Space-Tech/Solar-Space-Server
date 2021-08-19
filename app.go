@@ -114,6 +114,18 @@ func main()  {
 		})
 	})
 
+	r.POST("/api/test/encode_memo", func(c *gin.Context) {
+		a := c.PostForm("a")
+		C := c.PostForm("m")
+		m := c.PostForm("m")
+		t := c.PostForm("t")
+		encoded_memo := mtg.Pack_memo(a,C, m, t)
+		fmt.Printf("%+v\n", encoded_memo)
+		c.JSON(http.StatusOK, gin.H{
+			"memo": encoded_memo,
+		})
+	})
+
 	r.POST("/api/test/decode_memo", func(c *gin.Context) {
 		memo := c.PostForm("memo")
 		decoded_memo := mtg.Unpack_memo(memo)

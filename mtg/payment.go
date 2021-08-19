@@ -23,6 +23,12 @@ type Order struct {
 	T string 
 }
 
+func Pack_memo(a, c, m, t string) string {
+	packUuid, _ := uuid2.FromString(a)
+	pack, _ := msgpack.Marshal(Order{A: packUuid, C: c, M: m, T: t,})
+	memo := base64.StdEncoding.EncodeToString(pack)
+	return memo
+}
 func Unpack_memo(memo string) Order {
 	// 解码 memo
 	parsedpack, _ := base64.StdEncoding.DecodeString(memo)
