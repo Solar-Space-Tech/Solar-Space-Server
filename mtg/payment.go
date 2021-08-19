@@ -2,14 +2,16 @@ package mtg
 
 import (
 	"context"
+	"encoding/base64"
+	"fmt"
 	"log"
 	"time"
-	"encoding/base64"
-	uuid2 "github.com/satori/go.uuid"
+
 	"github.com/fox-one/mixin-sdk-go"
-	"github.com/vmihailenco/msgpack"
 	"github.com/fox-one/pkg/uuid"
+	uuid2 "github.com/satori/go.uuid"
 	"github.com/shopspring/decimal"
+	"github.com/vmihailenco/msgpack"
 )
 
 var (
@@ -36,7 +38,7 @@ func Unpack_memo(memo string) Order {
 	order_memo := Order{}
 	err := msgpack.Unmarshal(parsedpack, &order_memo)
 	if err != nil {
-		log.Panicln(err)
+		fmt.Println(err)
 	}
 	// TODO: 判断 memo 是否有效
 	// TODO: 如果有效则存入数据库
