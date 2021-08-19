@@ -34,13 +34,14 @@ func Pack_memo(a, c, m, t string) string {
 		Amount: m,
 		TimeLimit: t,
 	}
-	pack, _ := msgpack.Marshal(n)
+	pack, _ := msgpack.Marshal(&n)
 	memo := base64.StdEncoding.EncodeToString(pack)
 	return memo
 }
 func Unpack_memo(memo string) Order {
 	// 解码 memo
 	parsedpack, _ := base64.RawURLEncoding.DecodeString(memo)
+	fmt.Println(parsedpack)
 	order_memo := Order{}
 	err := msgpack.Unmarshal(parsedpack, &order_memo)
 	if err != nil {

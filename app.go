@@ -116,7 +116,7 @@ func main()  {
 
 	r.POST("/api/test/encode_memo", func(c *gin.Context) {
 		a := c.PostForm("a")
-		C := c.PostForm("m")
+		C := c.PostForm("c")
 		m := c.PostForm("m")
 		t := c.PostForm("t")
 		encoded_memo := mtg.Pack_memo(a,C, m, t)
