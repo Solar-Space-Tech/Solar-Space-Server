@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 	"encoding/base64"
-	uuid2 "github.com/satori/go.uuid"
+	// uuid2 "github.com/satori/go.uuid"
 	"github.com/fox-one/mixin-sdk-go"
 	"github.com/vmihailenco/msgpack"
 	"github.com/fox-one/pkg/uuid"
@@ -17,15 +17,14 @@ var (
 )
 
 type Order struct {
-	A uuid2.UUID 
+	A string 
 	C string 
 	M string 
 	T string 
 }
 
 func Pack_memo(a, c, m, t string) string {
-	packUuid, _ := uuid2.FromString(a)
-	pack, _ := msgpack.Marshal(Order{A: packUuid, C: c, M: m, T: t,})
+	pack, _ := msgpack.Marshal(Order{A: a, C: c, M: m, T: t,})
 	memo := base64.StdEncoding.EncodeToString(pack)
 	return memo
 }
