@@ -18,9 +18,9 @@ var (
 
 type Order struct {
 	A uuid2.UUID 
-	// C string 
-	// M string 
-	// T string 
+	C string 
+	M string 
+	T string 
 }
 
 func Unpack_memo(memo string) Order {
