@@ -17,10 +17,10 @@ var (
 )
 
 type Order struct {
-	A uuid2.UUID `json:"a"`
-	C string `json:"c"`
-	M string `json:"m"`
-	T string `json:"t"`
+	A uuid2.UUID 
+	C string 
+	M string 
+	T string 
 }
 
 func Unpack_memo(memo string) Order {
