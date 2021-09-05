@@ -19,10 +19,10 @@ var (
 )
 
 type Order struct {
-	AssetID uuid2.UUID `json:"a,omitempty" msgpack:"a,omitempty`
-	Action string `json:"c,omitempty" msgpack:"c,omitempty`
-	Amount string `json:"m,omitempty" msgpack:"m,omitempty`
-	TimeLimit string `json:"t,omitempty" msgpack:"t,omitempty`
+	AssetID uuid2.UUID `msgpack:"a"`
+	Action string `msgpack:"c"`
+	Amount string `msgpack:"m"`
+	TimeLimit string `msgpack:"t"`
 
 }
 
@@ -34,7 +34,10 @@ func Pack_memo(a, c, m, t string) string {
 		Amount: m,
 		TimeLimit: t,
 	}
-	pack, _ := msgpack.Marshal(&n)
+	pack, err := msgpack.Marshal(&n)
+	if err != nil {
+		log.Panicln(err)
+	}
 	memo := base64.StdEncoding.EncodeToString(pack)
 	return memo
 }
