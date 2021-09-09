@@ -41,6 +41,7 @@ func main()  {
 		log.Panicln(err)
 	}
 
+	// 新建机器人实例
 	client, err := mixin.NewFromKeystore(&store)
 	if err != nil {
 		log.Panicln(err)
@@ -49,6 +50,7 @@ func main()  {
 
 	ctx := context.Background()
 
+	// 启动 gin http 服务器
 	r := gin.Default()
 	r.Use(middlewares.Cors())
 	r.GET("/", func(c *gin.Context) {
@@ -107,7 +109,7 @@ func main()  {
 		access_token := c.PostForm("access_token")
 		var CNB = "965e5c6e-434c-3fa9-b780-c50f43cd955c"
 
-		code_id := mtg.MTG_sing_test(client, access_token, CNB, "HI,MTG", pcs.Pin)
+		code_id := mtg.MTG_sign_test(client, access_token, CNB, "HI,MTG", pcs.Pin)
 
 		c.JSON(http.StatusOK, gin.H{
 			"code_id": code_id,

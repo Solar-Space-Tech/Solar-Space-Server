@@ -18,14 +18,15 @@ var (
 	threshold uint8 = 1
 )
 
+// 多签交易 Memo 规范
 type Order struct {
 	AssetID uuid2.UUID `msgpack:"a"`
 	Action string `msgpack:"c"`
 	Amount string `msgpack:"m"`
 	TimeLimit string `msgpack:"t"`
-
 }
 
+// 将 Order 经过 mesgpack 打包，再 base64 加密
 func Pack_memo(a, c, m, t string) string {
 	packUuid, _ := uuid2.FromString(a)
 	n := Order{
@@ -41,6 +42,8 @@ func Pack_memo(a, c, m, t string) string {
 	memo := base64.StdEncoding.EncodeToString(pack)
 	return memo
 }
+
+// Memo 解码，为 Pack_memo 逆过程
 func Unpack_memo(memo string) Order {
 	// 解码 memo
 	parsedpack, _ := base64.RawURLEncoding.DecodeString(memo)
@@ -57,19 +60,16 @@ func Unpack_memo(memo string) Order {
 }
 
 func MTG_payment_test(c *mixin.Client, access_token, assetID, amount, memo string) (string) {
-	// log.Panicf("-|-|access_token|-|-/n<%s>\n",access_token)
 	ctx := mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())
-	user, err := mixin.UserMe(ctx, access_token)
+	user, err := mixin.UserMe(ctx, access_token) // 新建机器人实例
 	if err != nil {
 		log.Panicln("err:", err, access_token)
 	}
 
-	members := []string{c.ClientID, user.UserID}
-
+	members := []string{c.ClientID, user.UserID} // 门限签名的“分母”名单
 	amount_decimal, _ := decimal.NewFromString(amount)
 	input := mixin.TransferInput{
 		AssetID: assetID, 
-		// AssetID: "965e5c6e-434c-3fa9-b780-c50f43cd955c",
 		Amount:  amount_decimal, 
 		TraceID: uuid.New(),
 		Memo:    memo,
@@ -86,11 +86,11 @@ func MTG_payment_test(c *mixin.Client, access_token, assetID, amount, memo strin
 	if err != nil {
 		log.Panicln(err)
 	}
-	return payment.CodeID
+	return payment.CodeID // CodeID 可以组成 mixin://codes/[CodeID] 格式的 scheme url 用以唤醒支付页面
 }
 
 
-func MTG_sing_test(c *mixin.Client, access_token , assetID, memo, pin string) (string) {
+func MTG_sign_test(c *mixin.Client, access_token , assetID, memo, pin string) (string) {
 	// log.Panicf("-|-|access_token|-|-/n<%s>\n",access_token)
 	ctx := mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())
 	// 读取用户
@@ -114,9 +114,10 @@ func MTG_sing_test(c *mixin.Client, access_token , assetID, memo, pin string) (s
 			log.Panicf("ReadMultisigOutputs: %v", err)
 		}
 
+		// TODO: 整理筛选 outputs 的方法
 		for _, output := range outputs {
 			offset = output.UpdatedAt
-			if (output.AssetID == assetID) && (output.State == mixin.UTXOStateUnspent) { // 判断币种
+			if (output.AssetID == assetID) && (output.State == mixin.UTXOStateUnspent) { // 判断币种是否匹配
 				utxo = output
 				break
 			}
