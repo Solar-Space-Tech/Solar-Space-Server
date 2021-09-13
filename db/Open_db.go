@@ -2,15 +2,30 @@ package db
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
+	"os"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
 // db 对象可以 “ .Close() ”
 func Open_db() *sql.DB {
-	db, err := sql.Open("mysql", "sst_server:sexy0756@tcp(rm-bp1y56w4272v2u5frzo.mysql.rds.aliyuncs.com:3306)/sst?charset=utf8")
+	db_, err := os.Open("../db.json")
+	if err != nil {
+		log.Panicln(err)
+	}
+	var (
+		db_sc struct {
+			DB_type string `json:"db_type"`
+			Host    string `json:"host"`
+		}
+	)
+	if err := json.NewDecoder(db_).Decode(&db_sc); err != nil {
+		log.Panicln(err)
+	}
+	db, err := sql.Open(db_sc.DB_type, db_sc.Host)
 	if err != nil {
 		log.Panicln(err)
 		fmt.Println(err)
