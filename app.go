@@ -2,21 +2,21 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
-	"os"
-	"encoding/json"
 	"net/http"
+	"os"
 
 	db "GG-server/db"
 
 	"GG-server/middlewares"
 	"GG-server/mtg"
-	"github.com/gin-gonic/gin"
 	mixin "github.com/fox-one/mixin-sdk-go"
+	"github.com/gin-gonic/gin"
 )
 
-func main()  {
+func main() {
 	// 读取配置文件
 	f_keystore, err := os.Open("./keystore.json")
 	if err != nil {
@@ -29,13 +29,13 @@ func main()  {
 
 	var (
 		pcs struct {
-			Pin				string `json:"pin"`
-			Client_secret 	string `json:"client_secret"`
+			Pin           string `json:"pin"`
+			Client_secret string `json:"client_secret"`
 		}
 		store mixin.Keystore
 	)
 	if err := json.NewDecoder(f_pcs).Decode(&pcs); err != nil {
-		log.Panicln(err)		
+		log.Panicln(err)
 	}
 	if err := json.NewDecoder(f_keystore).Decode(&store); err != nil {
 		log.Panicln(err)
@@ -121,7 +121,7 @@ func main()  {
 		C := c.PostForm("c")
 		m := c.PostForm("m")
 		t := c.PostForm("t")
-		encoded_memo := mtg.Pack_memo(a,C, m, t)
+		encoded_memo := mtg.Pack_memo(a, C, m, t)
 		fmt.Printf("%+v\n", encoded_memo)
 		c.JSON(http.StatusOK, gin.H{
 			"memo": encoded_memo,

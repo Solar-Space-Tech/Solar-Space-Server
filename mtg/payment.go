@@ -20,19 +20,19 @@ var (
 
 // 多签交易 Memo 规范
 type Order struct {
-	AssetID uuid2.UUID `msgpack:"a"`
-	Action string `msgpack:"c"`
-	Amount string `msgpack:"m"`
-	TimeLimit string `msgpack:"t"`
+	AssetID   uuid2.UUID `msgpack:"a"`
+	Action    string     `msgpack:"c"`
+	Amount    string     `msgpack:"m"`
+	TimeLimit string     `msgpack:"t"`
 }
 
 // 将 Order 经过 mesgpack 打包，再 base64 加密
 func Pack_memo(a, c, m, t string) string {
 	packUuid, _ := uuid2.FromString(a)
 	n := Order{
-		AssetID: packUuid,
-		Action: c,
-		Amount: m,
+		AssetID:   packUuid,
+		Action:    c,
+		Amount:    m,
 		TimeLimit: t,
 	}
 	pack, err := msgpack.Marshal(&n)
@@ -59,7 +59,7 @@ func Unpack_memo(memo string) Order {
 	return order_memo
 }
 
-func MTG_payment_test(c *mixin.Client, access_token, assetID, amount, memo string) (string) {
+func MTG_payment_test(c *mixin.Client, access_token, assetID, amount, memo string) string {
 	ctx := mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())
 	user, err := mixin.UserMe(ctx, access_token) // 新建机器人实例
 	if err != nil {
@@ -69,8 +69,8 @@ func MTG_payment_test(c *mixin.Client, access_token, assetID, amount, memo strin
 	members := []string{c.ClientID, user.UserID} // 门限签名的“分母”名单
 	amount_decimal, _ := decimal.NewFromString(amount)
 	input := mixin.TransferInput{
-		AssetID: assetID, 
-		Amount:  amount_decimal, 
+		AssetID: assetID,
+		Amount:  amount_decimal,
 		TraceID: uuid.New(),
 		Memo:    memo,
 		OpponentMultisig: struct {
@@ -89,8 +89,7 @@ func MTG_payment_test(c *mixin.Client, access_token, assetID, amount, memo strin
 	return payment.CodeID // CodeID 可以组成 mixin://codes/[CodeID] 格式的 scheme url 用以唤醒支付页面
 }
 
-
-func MTG_sign_test(c *mixin.Client, access_token , assetID, memo, pin string) (string) {
+func MTG_sign_test(c *mixin.Client, access_token, assetID, memo, pin string) string {
 	// log.Panicf("-|-|access_token|-|-/n<%s>\n",access_token)
 	ctx := mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())
 	// 读取用户
@@ -134,16 +133,16 @@ func MTG_sign_test(c *mixin.Client, access_token , assetID, memo, pin string) (s
 	amount := utxo.Amount.Div(decimal.NewFromFloat(2)).Truncate(8)
 
 	tx, err := c.MakeMultisigTransaction(ctx, &mixin.TransactionInput{
-	Memo:   "multisig test",
-	Inputs: []*mixin.MultisigUTXO{utxo},
-	Outputs: []mixin.TransactionOutput{
-		{
-			Receivers: []string{user.UserID}, // 用户收币
-			Threshold: threshold,
-			Amount:    amount,
+		Memo:   "multisig test",
+		Inputs: []*mixin.MultisigUTXO{utxo},
+		Outputs: []mixin.TransactionOutput{
+			{
+				Receivers: []string{user.UserID}, // 用户收币
+				Threshold: threshold,
+				Amount:    amount,
+			},
 		},
-	},
-	Hint: uuid.New(),
+		Hint: uuid.New(),
 	})
 
 	if err != nil {
