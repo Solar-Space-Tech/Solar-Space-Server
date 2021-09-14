@@ -12,7 +12,7 @@ import (
 
 // db 对象可以 “ .Close() ”
 func Open_db() *sql.DB {
-	db_, err := os.Open("../db.json")
+	db_, err := os.Open("./db.json")
 	if err != nil {
 		log.Panicln(err)
 	}
