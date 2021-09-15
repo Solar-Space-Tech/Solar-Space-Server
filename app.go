@@ -19,13 +19,9 @@ import (
 func main() {
 	// 读取配置文件
 	f_keystore, err := os.Open("./keystore.json")
-	if err != nil {
-		log.Panicln(err)
-	}
+	checkErr(err)
 	f_pcs, err := os.Open("./pin&client_secret.json")
-	if err != nil {
-		log.Panicln(err)
-	}
+	checkErr(err)
 
 	var (
 		pcs struct {
@@ -43,9 +39,7 @@ func main() {
 
 	// 新建机器人实例
 	client, err := mixin.NewFromKeystore(&store)
-	if err != nil {
-		log.Panicln(err)
-	}
+	checkErr(err)
 	fmt.Println(client)
 
 	ctx := context.Background()
@@ -73,9 +67,7 @@ func main() {
 
 		//获取用户信息
 		user, err := mixin.UserMe(ctx, token)
-		if err != nil {
-			log.Panicln("err:", err)
-		}
+		checkErr(err)
 		fmt.Println("phone:", user.Phone)
 
 		// 判断是否为新用户
@@ -141,4 +133,10 @@ func main() {
 	})
 
 	r.Run(":8080")
+}
+
+func checkErr(err error) {
+	if err != nil {
+		log.Panicln(err)
+	}
 }
