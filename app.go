@@ -14,6 +14,7 @@ import (
 	"GG-server/mtg"
 	mixin "github.com/fox-one/mixin-sdk-go"
 	"github.com/gin-gonic/gin"
+	uuid2 "github.com/satori/go.uuid"
 )
 
 func main() {
@@ -109,11 +110,14 @@ func main() {
 	})
 
 	r.POST("/api/test/encode_memo", func(c *gin.Context) {
-		a := c.PostForm("a")
-		C := c.PostForm("c")
-		m := c.PostForm("m")
-		t := c.PostForm("t")
-		encoded_memo := mtg.Pack_memo(a, C, m, t)
+		packUuid, _ := uuid2.FromString(c.PostForm("a"))
+		order := mtg.Order{
+			AssetID:   packUuid,
+			Action:    c.PostForm("c"),
+			Amount:    c.PostForm("m"),
+			TimeLimit: c.PostForm("t"),
+		}
+		encoded_memo := order.Pack_memo()
 		fmt.Printf("%+v\n", encoded_memo)
 		c.JSON(http.StatusOK, gin.H{
 			"memo": encoded_memo,

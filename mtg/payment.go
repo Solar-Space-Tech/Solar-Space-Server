@@ -20,20 +20,20 @@ var (
 
 // 多签交易 Memo 规范
 type Order struct {
-	AssetID   uuid2.UUID `msgpack:"a"`
-	Action    string     `msgpack:"c"`
-	Amount    string     `msgpack:"m"`
-	TimeLimit string     `msgpack:"t"`
+	AssetID   uuid2.UUID `msgpack:"a,omitemnty"`
+	Action    string     `msgpack:"c,omitemnty"`
+	Amount    string     `msgpack:"m,omitemnty"`
+	TimeLimit string     `msgpack:"t,omitemnty"`
 }
 
 // 将 Order 经过 mesgpack 打包，再 base64 加密
-func Pack_memo(a, c, m, t string) string {
-	packUuid, _ := uuid2.FromString(a)
+func (o Order)Pack_memo() string {
+	packUuid, _ := uuid2.FromString(o.AssetID.String())
 	n := Order{
 		AssetID:   packUuid,
-		Action:    c,
-		Amount:    m,
-		TimeLimit: t,
+		Action:    o.Action,
+		Amount:    o.Amount,
+		TimeLimit: o.TimeLimit,
 	}
 	pack, err := msgpack.Marshal(&n)
 	if err != nil {
