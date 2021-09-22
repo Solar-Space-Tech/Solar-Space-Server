@@ -19,23 +19,16 @@ var (
 )
 
 // 多签交易 Memo 规范
-type Order struct {
+type Action struct {
 	AssetID   uuid2.UUID `msgpack:"a,omitemnty"`
 	Action    string     `msgpack:"c,omitemnty"`
 	Amount    string     `msgpack:"m,omitemnty"`
-	TimeLimit string     `msgpack:"t,omitemnty"`
+	Timeout string     `msgpack:"t,omitemnty"`
 }
 
 // 将 Order 经过 mesgpack 打包，再 base64 加密
-func (o Order)Pack_memo() string {
-	packUuid, _ := uuid2.FromString(o.AssetID.String())
-	n := Order{
-		AssetID:   packUuid,
-		Action:    o.Action,
-		Amount:    o.Amount,
-		TimeLimit: o.TimeLimit,
-	}
-	pack, err := msgpack.Marshal(&n)
+func (A Action)Pack_memo() string {
+	pack, err := msgpack.Marshal(&A)
 	if err != nil {
 		log.Panicln(err)
 	}
@@ -44,11 +37,11 @@ func (o Order)Pack_memo() string {
 }
 
 // Memo 解码，为 Pack_memo 逆过程
-func Unpack_memo(memo string) Order {
+func Unpack_memo(memo string) Action {
 	// 解码 memo
 	parsedpack, _ := base64.RawURLEncoding.DecodeString(memo)
 	fmt.Println(parsedpack)
-	order_memo := Order{}
+	order_memo := Action{}
 	err := msgpack.Unmarshal(parsedpack, &order_memo)
 	if err != nil {
 		fmt.Println(err)

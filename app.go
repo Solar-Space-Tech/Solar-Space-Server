@@ -111,11 +111,11 @@ func main() {
 
 	r.POST("/api/test/encode_memo", func(c *gin.Context) {
 		packUuid, _ := uuid2.FromString(c.PostForm("a"))
-		order := mtg.Order{
+		order := mtg.Action{
 			AssetID:   packUuid,
 			Action:    c.PostForm("c"),
 			Amount:    c.PostForm("m"),
-			TimeLimit: c.PostForm("t"),
+			Timeout: c.PostForm("t"),
 		}
 		encoded_memo := order.Pack_memo()
 		fmt.Printf("%+v\n", encoded_memo)
@@ -132,7 +132,7 @@ func main() {
 			"a": decoded_memo.AssetID,
 			"c": decoded_memo.Action,
 			"m": decoded_memo.Amount,
-			"t": decoded_memo.TimeLimit,
+			"t": decoded_memo.Timeout,
 		})
 	})
 
