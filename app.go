@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	// "strconv"
 
 	db "GG-server/db"
 
@@ -89,7 +88,9 @@ func main() {
 	})
 
 	r.POST("/api/test/deposit_to_multisign", func(c *gin.Context) {
-		access_token := c.PostForm("access_token")
+		json := make(map[string]interface{})
+		c.BindJSON(&json)
+		access_token := json["access_token"].(string)
 		var CNB = "965e5c6e-434c-3fa9-b780-c50f43cd955c"
 
 		code_id := mtg.MTG_payment_test(client, access_token, CNB, "10", "HI,MTG")
@@ -100,7 +101,9 @@ func main() {
 	})
 
 	r.POST("/api/test/withdraw_from_multisign", func(c *gin.Context) {
-		access_token := c.PostForm("access_token")
+		json := make(map[string]interface{})
+		c.BindJSON(&json)
+		access_token := json["access_token"].(string)
 		var CNB = "965e5c6e-434c-3fa9-b780-c50f43cd955c"
 
 		code_id := mtg.MTG_sign_test(client, access_token, CNB, "HI,MTG", pcs.Pin)
@@ -111,9 +114,11 @@ func main() {
 	})
 
 	r.POST("/api/test/encode_memo", func(c *gin.Context) {
-		packUuid, _ := uuid2.FromString(c.PostForm("a"))
+		json := make(map[string]interface{})
+		c.BindJSON(&json)
+		packUuid, _ := uuid2.FromString(json["a"].(string))
 		// actionType, _ := strconv.Atoi(c.PostForm("c"))
-		order := mtg.TrustAction(packUuid, c.PostForm("t"), c.PostForm("m"))
+		order := mtg.TrustAction(packUuid, json["t"].(string), json["m"].(string))
 		encoded_memo := order.Pack_memo()
 		c.JSON(http.StatusOK, gin.H{
 			"memo": encoded_memo,
@@ -121,7 +126,9 @@ func main() {
 	})
 
 	r.POST("/api/test/decode_memo", func(c *gin.Context) {
-		memo := c.PostForm("memo")
+		json := make(map[string]interface{})
+		c.BindJSON(&json)
+		memo := json["memo"].(string)
 		decoded_memo := mtg.Unpack_memo(memo)
 		fmt.Printf("%+v\n", decoded_memo)
 		c.JSON(http.StatusOK, gin.H{
