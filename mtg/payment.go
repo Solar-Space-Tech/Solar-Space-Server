@@ -2,55 +2,17 @@ package mtg
 
 import (
 	"context"
-	"encoding/base64"
-	"fmt"
 	"log"
 	"time"
 
 	"github.com/fox-one/mixin-sdk-go"
 	"github.com/fox-one/pkg/uuid"
-	uuid2 "github.com/gofrs/uuid"
 	"github.com/shopspring/decimal"
-	"github.com/vmihailenco/msgpack"
 )
 
 var (
 	threshold uint8 = 1
 )
-
-// 多签交易 Memo 规范
-type Action struct {
-	AssetID uuid2.UUID `msgpack:"a,omitemnty"`
-	Action  string     `msgpack:"c,omitemnty"`
-	Amount  string     `msgpack:"m,omitemnty"`
-	Timeout string     `msgpack:"t,omitemnty"`
-}
-
-// 将 Order 经过 mesgpack 打包，再 base64 加密
-func (A Action) Pack_memo() string {
-	pack, err := msgpack.Marshal(&A)
-	if err != nil {
-		log.Panicln(err)
-	}
-	memo := base64.StdEncoding.EncodeToString(pack)
-	return memo
-}
-
-// Memo 解码，为 Pack_memo 逆过程
-func Unpack_memo(memo string) Action {
-	// 解码 memo
-	parsedpack, _ := base64.StdEncoding.DecodeString(memo)
-	fmt.Println(parsedpack)
-	order_memo := Action{}
-	err := msgpack.Unmarshal(parsedpack, &order_memo)
-	if err != nil {
-		fmt.Println(err)
-	}
-	// TODO: 判断 memo 是否有效
-	// TODO: 如果有效则存入数据库
-
-	return order_memo
-}
 
 func MTG_payment_test(c *mixin.Client, access_token, assetID, amount, memo string) string {
 	ctx := mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())

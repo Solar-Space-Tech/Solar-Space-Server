@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	// "strconv"
 
 	db "GG-server/db"
 
@@ -111,14 +112,9 @@ func main() {
 
 	r.POST("/api/test/encode_memo", func(c *gin.Context) {
 		packUuid, _ := uuid2.FromString(c.PostForm("a"))
-		order := mtg.Action{
-			AssetID:   packUuid,
-			Action:    c.PostForm("c"),
-			Amount:    c.PostForm("m"),
-			Timeout: c.PostForm("t"),
-		}
+		// actionType, _ := strconv.Atoi(c.PostForm("c"))
+		order := mtg.TrustAction(packUuid, c.PostForm("t"), c.PostForm("m"))
 		encoded_memo := order.Pack_memo()
-		fmt.Printf("%+v\n", encoded_memo)
 		c.JSON(http.StatusOK, gin.H{
 			"memo": encoded_memo,
 		})
@@ -130,7 +126,7 @@ func main() {
 		fmt.Printf("%+v\n", decoded_memo)
 		c.JSON(http.StatusOK, gin.H{
 			"a": decoded_memo.AssetID,
-			"c": decoded_memo.Action,
+			"c": decoded_memo.Type,
 			"m": decoded_memo.Amount,
 			"t": decoded_memo.Timeout,
 		})
