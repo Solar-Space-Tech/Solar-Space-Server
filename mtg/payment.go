@@ -9,7 +9,7 @@ import (
 
 	"github.com/fox-one/mixin-sdk-go"
 	"github.com/fox-one/pkg/uuid"
-	uuid2 "github.com/satori/go.uuid"
+	uuid2 "github.com/gofrs/uuid"
 	"github.com/shopspring/decimal"
 	"github.com/vmihailenco/msgpack"
 )
@@ -20,14 +20,14 @@ var (
 
 // 多签交易 Memo 规范
 type Action struct {
-	AssetID   uuid2.UUID `msgpack:"a,omitemnty"`
-	Action    string     `msgpack:"c,omitemnty"`
-	Amount    string     `msgpack:"m,omitemnty"`
+	AssetID uuid2.UUID `msgpack:"a,omitemnty"`
+	Action  string     `msgpack:"c,omitemnty"`
+	Amount  string     `msgpack:"m,omitemnty"`
 	Timeout string     `msgpack:"t,omitemnty"`
 }
 
 // 将 Order 经过 mesgpack 打包，再 base64 加密
-func (A Action)Pack_memo() string {
+func (A Action) Pack_memo() string {
 	pack, err := msgpack.Marshal(&A)
 	if err != nil {
 		log.Panicln(err)
@@ -39,7 +39,7 @@ func (A Action)Pack_memo() string {
 // Memo 解码，为 Pack_memo 逆过程
 func Unpack_memo(memo string) Action {
 	// 解码 memo
-	parsedpack, _ := base64.RawURLEncoding.DecodeString(memo)
+	parsedpack, _ := base64.StdEncoding.DecodeString(memo)
 	fmt.Println(parsedpack)
 	order_memo := Action{}
 	err := msgpack.Unmarshal(parsedpack, &order_memo)

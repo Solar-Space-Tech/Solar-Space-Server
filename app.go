@@ -14,7 +14,7 @@ import (
 	"GG-server/mtg"
 	mixin "github.com/fox-one/mixin-sdk-go"
 	"github.com/gin-gonic/gin"
-	uuid2 "github.com/satori/go.uuid"
+	uuid2 "github.com/gofrs/uuid"
 )
 
 func main() {
