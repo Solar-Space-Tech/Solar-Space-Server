@@ -16,7 +16,7 @@ var (
 
 func MTG_payment_test(c *mixin.Client, access_token, assetID, amount, memo string) string {
 	ctx := mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())
-	user, err := mixin.UserMe(ctx, access_token) // 新建机器人实例
+	user, err := mixin.UserMe(ctx, access_token) // 新建用户实例
 	if err != nil {
 		log.Panicln("err:", err, access_token)
 	}
