@@ -1,15 +1,11 @@
 package mtg
 
 import (
-	// "crypto/ed25519"
 	"encoding/base64"
 	"fmt"
 	"log"
 
-	// "github.com/fox-one/4swap-sdk-go/mtg/encoder"
-	// "github.com/fox-one/mixin-sdk-go"
 	"github.com/gofrs/uuid"
-	// "github.com/shopspring/decimal"
 	"github.com/vmihailenco/msgpack"
 )
 
@@ -17,13 +13,9 @@ import (
 type Action struct {
 	// action type
 	Type string `msgpack:"c,omitemnty"`
-
 	// AssetID is pair quote asset id if base asset will be paid, otherwise this is base asset id.
-	// Ignore if type is Remove
 	AssetID uuid.UUID `msgpack:"a,omitemnty"`
-
 	Amount string `msgpack:"m,omitemnty"`
-
 	Timeout string `msgpack:"t,omitemnty"`
 }
 
