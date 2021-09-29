@@ -27,13 +27,11 @@ type Payment struct {
 func (p Payment) MTG_payment(c *mixin.Client) string {
 	ctx := mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())
 	var memo string
+	assetid, _ := uuid.FromString(p.AssetID)
 	switch p.Type {
 	case "Trust":
-		{
-			assetid, _ := uuid.FromString(p.AssetID)
 			memo = TrustAction(assetid, p.Timeout, p.Amount.String())
-		}
-		// TODO: case...
+	// TODO: case...
 	}
 	input := mixin.TransferInput{
 		AssetID: p.AssetID,
