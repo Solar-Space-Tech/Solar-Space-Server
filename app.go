@@ -12,9 +12,12 @@ import (
 
 	"GG-server/middlewares"
 	"GG-server/mtg"
+
 	mixin "github.com/fox-one/mixin-sdk-go"
+	"github.com/fox-one/pkg/uuid"
 	"github.com/gin-gonic/gin"
 	uuid2 "github.com/gofrs/uuid"
+	"github.com/shopspring/decimal"
 )
 
 func main() {
@@ -93,7 +96,12 @@ func main() {
 		access_token := json["access_token"].(string)
 		var CNB = "965e5c6e-434c-3fa9-b780-c50f43cd955c"
 
-		code_id := mtg.MTG_payment_test(client, access_token, CNB, "10", "HI,MTG")
+		amount, _ := decimal.NewFromString("10")
+		var threshold uint8 = 1
+		members := []string{client.ClientID, mixin.NewFromAccessToken(access_token).ClientID}
+		traceid := uuid.New()
+		timeout := "1321354"
+		code_id := mtg.TrustMTGPayment(client, CNB, traceid, timeout, amount, members, threshold)
 
 		c.JSON(http.StatusOK, gin.H{
 			"code_id": code_id,
