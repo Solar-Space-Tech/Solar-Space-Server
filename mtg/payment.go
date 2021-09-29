@@ -15,23 +15,23 @@ var (
 )
 
 type Payment struct {
-	AssetID   string          `json:"asset_id,omitempty"`
-	Amount    decimal.Decimal `json:"amount,omitempty"`
-	Type      string          `json:"type,omitempty"`
-	Receivers []string        `json:"receivers,omitempty"`
-	Threshold uint8           `json:"threshold,omitempty"`
-	TraceID   string          `json:"trace_id,omitempty"`
-	Timeout   string          `json:"time_out,omitempty"`
+	AssetID    string          `json:"asset_id,omitempty"`
+	Amount     decimal.Decimal `json:"amount,omitempty"`
+	ActionType string          `json:"type,omitempty"`
+	Receivers  []string        `json:"receivers,omitempty"`
+	Threshold  uint8           `json:"threshold,omitempty"`
+	TraceID    string          `json:"trace_id,omitempty"`
+	Timeout    string          `json:"time_out,omitempty"`
 }
 
 func (p Payment) MTG_payment(c *mixin.Client) string {
 	ctx := mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())
 	var memo string
 	assetid, _ := uuid.FromString(p.AssetID)
-	switch p.Type {
+	switch p.ActionType {
 	case "Trust":
-			memo = TrustAction(assetid, p.Timeout, p.Amount.String())
-	// TODO: case...
+		memo = TrustAction(assetid, p.Timeout, p.Amount.String())
+		// TODO: case...
 	}
 	input := mixin.TransferInput{
 		AssetID: p.AssetID,
@@ -52,6 +52,20 @@ func (p Payment) MTG_payment(c *mixin.Client) string {
 		log.Panicln(err)
 	}
 	return payment.CodeID
+}
+
+func TrustMTGPayment(c *mixin.Client, asset_id, trace_id, time_out string, amount_decimal decimal.Decimal, receivers []string, threshold uint8) string {
+	payment := Payment{
+		AssetID:    asset_id,
+		Amount:     amount_decimal,
+		ActionType: "Trust",
+		Receivers:  receivers,
+		Threshold:  threshold,
+		TraceID:    trace_id,
+		Timeout:    time_out,
+	}
+	code_id := payment.MTG_payment(c)
+	return code_id
 }
 
 func MTG_payment_test(c *mixin.Client, access_token, assetID, amount, memo string) string {
