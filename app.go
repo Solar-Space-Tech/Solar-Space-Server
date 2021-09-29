@@ -118,8 +118,7 @@ func main() {
 		c.BindJSON(&json)
 		packUuid, _ := uuid2.FromString(json["a"].(string))
 		// actionType, _ := strconv.Atoi(c.PostForm("c"))
-		order := mtg.TrustAction(packUuid, json["t"].(string), json["m"].(string))
-		encoded_memo := order.Pack_memo()
+		encoded_memo := mtg.TrustAction(packUuid, json["t"].(string), json["m"].(string))
 		c.JSON(http.StatusOK, gin.H{
 			"memo": encoded_memo,
 		})

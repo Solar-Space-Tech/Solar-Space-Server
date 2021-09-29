@@ -19,13 +19,14 @@ type Action struct {
 	Timeout string `msgpack:"t,omitemnty"`
 }
 
-func TrustAction(assetID uuid.UUID, timeout, amount string) Action {
-	return Action{
+func TrustAction(assetID uuid.UUID, timeout, amount string) string {
+	a := Action{
 		Type:    "Trust",
 		AssetID: assetID,
 		Timeout: timeout,
 		Amount:  amount,
 	}
+	return a.Pack_memo()
 }
 
 // 将 Order 经过 mesgpack 打包，再 base64 加密
