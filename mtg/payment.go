@@ -14,16 +14,18 @@ var (
 	threshold uint8 = 1
 )
 
+// It should be a general struct for any Payment situation
 type Payment struct {
 	AssetID    string          `json:"asset_id,omitempty"`
 	Amount     decimal.Decimal `json:"amount,omitempty"`
 	ActionType string          `json:"type,omitempty"`
-	Receivers  []string        `json:"receivers,omitempty"`
+	Receivers  []string        `json:"receivers,omitempty"` // 门限签名的“分母”名单
 	Threshold  uint8           `json:"threshold,omitempty"`
 	TraceID    string          `json:"trace_id,omitempty"`
 	Timeout    string          `json:"time_out,omitempty"`
 }
 
+// Generate a code_id for user to a MTG account
 func (p Payment) MTG_payment(c *mixin.Client) string {
 	ctx := mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())
 	var memo string
@@ -51,9 +53,12 @@ func (p Payment) MTG_payment(c *mixin.Client) string {
 	if err != nil {
 		log.Panicln(err)
 	}
+
+	// CodeID 可以组成 mixin://codes/[CodeID] 格式的 scheme url 用以唤醒支付页面
 	return payment.CodeID
 }
 
+// A simple example for "Trust" way for coin be banked(or any other meaning, it takes no mean temporary)
 func TrustMTGPayment(c *mixin.Client, asset_id, trace_id, time_out string, amount_decimal decimal.Decimal, receivers []string, threshold uint8) string {
 	payment := Payment{
 		AssetID:    asset_id,
