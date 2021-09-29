@@ -14,6 +14,48 @@ var (
 	threshold uint8 = 1
 )
 
+type Payment struct {
+	AssetID   string          `json:"asset_id,omitempty"`
+	Amount    decimal.Decimal `json:"amount,omitempty"`
+	Type      string          `json:"type,omitempty"`
+	Receivers []string        `json:"receivers,omitempty"`
+	Threshold uint8           `json:"threshold,omitempty"`
+	TraceID   string          `json:"trace_id,omitempty"`
+	Timeout   string          `json:"time_out,omitempty"`
+}
+
+func (p Payment) MTG_payment(c *mixin.Client) string {
+	ctx := mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())
+	var memo string
+	switch p.Type {
+	case "Trust":
+		{
+			assetid, _ := uuid.FromString(p.AssetID)
+			memo = TrustAction(assetid, p.Timeout, p.Amount.String())
+		}
+		// TODO: case...
+	}
+	input := mixin.TransferInput{
+		AssetID: p.AssetID,
+		Amount:  p.Amount,
+		TraceID: p.TraceID,
+		Memo:    memo,
+		OpponentMultisig: struct {
+			Receivers []string `json:"receivers,omitempty"`
+			Threshold uint8    `json:"threshold,omitempty"`
+		}{
+			Receivers: p.Receivers,
+			Threshold: p.Threshold,
+		},
+	}
+
+	payment, err := c.VerifyPayment(ctx, input)
+	if err != nil {
+		log.Panicln(err)
+	}
+	return payment.CodeID
+}
+
 func MTG_payment_test(c *mixin.Client, access_token, assetID, amount, memo string) string {
 	ctx := mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())
 	user, err := mixin.UserMe(ctx, access_token) // 新建用户实例
