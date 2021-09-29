@@ -73,36 +73,6 @@ func TrustMTGPayment(c *mixin.Client, asset_id, trace_id, time_out string, amoun
 	return code_id
 }
 
-func MTG_payment_test(c *mixin.Client, access_token, assetID, amount, memo string) string {
-	ctx := mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())
-	user, err := mixin.UserMe(ctx, access_token) // 新建用户实例
-	if err != nil {
-		log.Panicln("err:", err, access_token)
-	}
-
-	members := []string{c.ClientID, user.UserID} // 门限签名的“分母”名单
-	amount_decimal, _ := decimal.NewFromString(amount)
-	input := mixin.TransferInput{
-		AssetID: assetID,
-		Amount:  amount_decimal,
-		TraceID: uuid.New(),
-		Memo:    memo,
-		OpponentMultisig: struct {
-			Receivers []string `json:"receivers,omitempty"`
-			Threshold uint8    `json:"threshold,omitempty"`
-		}{
-			Receivers: members,
-			Threshold: threshold,
-		},
-	}
-
-	payment, err := c.VerifyPayment(ctx, input)
-	if err != nil {
-		log.Panicln(err)
-	}
-	return payment.CodeID // CodeID 可以组成 mixin://codes/[CodeID] 格式的 scheme url 用以唤醒支付页面
-}
-
 func MTG_sign_test(c *mixin.Client, access_token, assetID, memo, pin string) string {
 	// log.Panicf("-|-|access_token|-|-/n<%s>\n",access_token)
 	ctx := mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())
