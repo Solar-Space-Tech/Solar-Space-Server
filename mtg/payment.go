@@ -1,3 +1,11 @@
+/*
+ *		When a PAYMENT is generated, a code_id must come with that, so Mixin 
+ *	Messenger could call up the PIN-entry page as a "mixin://codes/[CodeID]" 
+ *	like scheme url. It is sure enough that a PAYMENT is following MTG rules 
+ *	and the memo is use to recognize the validity such as the action type, 
+ *	the timeout and so on. But the more vital matter, is the communication 
+ *	between	MTG nodes. 
+ */
 package mtg
 
 import (
@@ -14,7 +22,7 @@ var (
 	threshold uint8 = 1
 )
 
-// It should be a general struct for any Payment situation
+// NOTE: It should be a general struct for any Payment situation
 type Payment struct {
 	AssetID    string          `json:"asset_id,omitempty"`
 	Amount     decimal.Decimal `json:"amount,omitempty"`
@@ -74,7 +82,6 @@ func TrustMTGPayment(c *mixin.Client, asset_id, trace_id, time_out string, amoun
 }
 
 func MTG_sign_test(c *mixin.Client, access_token, assetID, memo, pin string) string {
-	// log.Panicf("-|-|access_token|-|-/n<%s>\n",access_token)
 	ctx := mixin.WithMixinNetHost(context.Background(), mixin.RandomMixinNetHost())
 	// 读取用户
 	client := mixin.NewFromAccessToken(access_token)
