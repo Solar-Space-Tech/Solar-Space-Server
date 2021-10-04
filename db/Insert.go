@@ -1,36 +1,26 @@
 package db
 
 import (
-	"fmt"
-	"log"
-
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func Insert_mixin(phone, uuid, name string) bool {
-	db := Open_db()
-	if err := db.Ping(); err != nil {
-		log.Panicln(err)
-		return false
-	}
-	defer db.Close()
-
-	stmt, err := db.Prepare("INSERT users SET phone=?,uuid=?,name=?")
-	checkErr(err)
-
-	res, err := stmt.Exec(phone, uuid, name)
-	checkErr(err)
-
-	id, err := res.LastInsertId()
-	checkErr(err)
-
-	fmt.Println(id)
-
-	return true
+type User struct {
+	Uuid  string
+	Phone string
+	Name  string
 }
 
-func checkErr(err error) {
-	if err != nil {
-		log.Panicln(err)
+func Insert_mixin(phone, uuid, name string) bool {
+	db, _ := Open_db()
+
+	defer db.Close()
+
+	user_info := User{
+		Uuid:  uuid,
+		Phone: phone,
+		Name:  name,
 	}
+	db.Create(&user_info)
+
+	return true
 }
