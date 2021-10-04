@@ -3,20 +3,17 @@ package mtg
 import (
 	"encoding/base64"
 	"fmt"
-	"log"
-
 	"github.com/gofrs/uuid"
 	"github.com/vmihailenco/msgpack"
+	"log"
 )
 
 // 多签交易 Memo 规范
 type Action struct {
-	// action type
-	Type string `msgpack:"c,omitemnty"`
-	// AssetID is pair quote asset id if base asset will be paid, otherwise this is base asset id.
+	Type    string    `msgpack:"c,omitemnty"`
 	AssetID uuid.UUID `msgpack:"a,omitemnty"`
-	Amount string `msgpack:"m,omitemnty"`
-	Timeout string `msgpack:"t,omitemnty"`
+	Amount  string    `msgpack:"m,omitemnty"`
+	Timeout string    `msgpack:"t,omitemnty"`
 }
 
 func TrustAction(assetID uuid.UUID, timeout, amount string) string {
@@ -41,7 +38,6 @@ func (A Action) Pack_memo() string {
 
 // Memo 解码，为 Pack_memo 逆过程
 func Unpack_memo(memo string) Action {
-	// 解码 memo
 	parsedpack, _ := base64.StdEncoding.DecodeString(memo)
 	fmt.Println(parsedpack)
 	order_memo := Action{}
