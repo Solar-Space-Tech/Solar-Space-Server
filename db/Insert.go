@@ -4,12 +4,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type User struct {
-	Uuid  string
-	Phone string
-	Name  string
-}
-
 func Insert_mixin(phone, uuid, name string) bool {
 	db, _ := Open_db()
 
