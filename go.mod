@@ -1,4 +1,4 @@
-module GG-server
+module Solar-Space-Server
 
 go 1.16
 

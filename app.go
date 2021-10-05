@@ -8,10 +8,10 @@ import (
 	"net/http"
 	"os"
 
-	db "GG-server/db"
+	db "Solar-Space-Server/db"
 
-	"GG-server/middlewares"
-	"GG-server/mtg"
+	"Solar-Space-Server/middlewares"
+	"Solar-Space-Server/mtg"
 
 	mixin "github.com/fox-one/mixin-sdk-go"
 	"github.com/fox-one/pkg/uuid"
