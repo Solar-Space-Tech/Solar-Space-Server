@@ -80,6 +80,7 @@ func main() {
 			db.Insert_mixin(user.Phone, user.UserID, user.FullName)
 		}
 
+		// Send user a msg when login successfully to hint user
 		cid := mixin.UniqueConversationID(client.ClientID, user.UserID)
 		id, _ := uuid.FromString(cid)
 		
@@ -90,7 +91,7 @@ func main() {
 			Category: mixin.MessageCategoryPlainText,
 			Data:     base64.StdEncoding.EncodeToString([]byte("登陆成功")), 
 		}
-		// Send the response
+		// Send the msg
 		err = client.SendMessage(ctx, reply)
 		checkErr(err)
 
