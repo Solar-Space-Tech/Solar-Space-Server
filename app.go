@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -86,8 +87,8 @@ func main() {
 			ConversationID: cid,
 			RecipientID: user.UserID,
 			MessageID: uuid2.NewV5(id, "reply").String(),
-			Category: "PLAIN_TEXT",
-			Data:     "登陆成功", 
+			Category: mixin.MessageCategoryPlainText,
+			Data:     base64.StdEncoding.EncodeToString([]byte("登陆成功")), 
 		}
 		// Send the response
 		checkErr(client.SendMessage(ctx, reply))
