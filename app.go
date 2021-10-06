@@ -83,17 +83,9 @@ func main() {
 		id, _ := uuid.FromString(cid)
 		
 		reply := &mixin.MessageRequest{
-			// Reuse the conversation between the sender and the bot.
-			// There is an unique UUID for each conversation.
 			ConversationID: cid,
-			// The user ID of the recipient.
-			// The bot will reply messages, so here is the sender's ID of each incoming message.
 			RecipientID: user.UserID,
-			// Create a new message id to reply, it should be an UUID never used by any other message.
-			// Create it with a "reply" and the incoming message ID.
 			MessageID: uuid2.NewV5(id, "reply").String(),
-			// The bot just reply the same category and the sam content of the incoming message
-			// So, we copy the category and data
 			Category: "PLAIN_TEXT",
 			Data:     "登陆成功", 
 		}
