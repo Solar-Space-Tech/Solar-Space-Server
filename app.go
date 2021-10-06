@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -78,6 +79,21 @@ func main() {
 		if !db.If_old_user(user.UserID, user.Phone) {
 			db.Insert_mixin(user.Phone, user.UserID, user.FullName)
 		}
+
+		// Send user a msg when login successfully to hint user
+		cid := mixin.UniqueConversationID(client.ClientID, user.UserID)
+		id, _ := uuid.FromString(cid)
+		
+		msg := &mixin.MessageRequest{
+			ConversationID: cid,
+			RecipientID: user.UserID,
+			MessageID: uuid2.NewV5(id, "login_successful").String(),
+			Category: mixin.MessageCategoryPlainText,
+			Data:     base64.StdEncoding.EncodeToString([]byte("登陆成功")), 
+		}
+		// Send the msg
+		err = client.SendMessage(ctx, msg)
+		checkErr(err)
 
 		//跳转到 return_to,携带 access token
 		c.Redirect(http.StatusMovedPermanently, "http://"+return_to+"/#/?access_token="+token)
