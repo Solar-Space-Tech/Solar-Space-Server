@@ -98,7 +98,7 @@ func main() {
 			Data:     "登陆成功", 
 		}
 		// Send the response
-		client.SendMessage(ctx, reply)
+		checkErr(client.SendMessage(ctx, reply))
 
 		//跳转到 return_to,携带 access token
 		c.Redirect(http.StatusMovedPermanently, "http://"+return_to+"/#/?access_token="+token)
