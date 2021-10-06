@@ -86,7 +86,7 @@ func main() {
 		reply := &mixin.MessageRequest{
 			ConversationID: cid,
 			RecipientID: user.UserID,
-			MessageID: uuid2.NewV5(id, "reply").String(),
+			MessageID: uuid2.NewV5(id, "login_successful").String(),
 			Category: mixin.MessageCategoryPlainText,
 			Data:     base64.StdEncoding.EncodeToString([]byte("登陆成功")), 
 		}
