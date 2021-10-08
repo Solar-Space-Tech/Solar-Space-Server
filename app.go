@@ -83,13 +83,13 @@ func main() {
 		// Send user a msg when login successfully to hint user
 		cid := mixin.UniqueConversationID(client.ClientID, user.UserID)
 		id, _ := uuid.FromString(cid)
-		
+
 		msg := &mixin.MessageRequest{
 			ConversationID: cid,
-			RecipientID: user.UserID,
-			MessageID: uuid2.NewV5(id, "login_successful").String(),
-			Category: mixin.MessageCategoryPlainText,
-			Data:     base64.StdEncoding.EncodeToString([]byte("登陆成功")), 
+			RecipientID:    user.UserID,
+			MessageID:      uuid2.NewV5(id, "login_successful").String(),
+			Category:       mixin.MessageCategoryPlainText,
+			Data:           base64.StdEncoding.EncodeToString([]byte("登陆成功")),
 		}
 		// Send the msg
 		err = client.SendMessage(ctx, msg)
