@@ -30,7 +30,7 @@ func Open_db() (*gorm.DB, error) {
 	}
 	checkErr(db.DB().Ping())
 
-	db.AutoMigrate(&User{}) // Generate sheet by struct
+	db.AutoMigrate(&User{}, &SubWallet{}) // Generate sheet by struct
 
 	return db, nil
 }
