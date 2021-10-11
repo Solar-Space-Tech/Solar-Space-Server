@@ -11,13 +11,14 @@ import (
 
 	db "Solar-Space-Server/db"
 
-	"Solar-Space-Server/middlewares"
 	"Solar-Space-Server/mtg"
 
 	mixin "github.com/fox-one/mixin-sdk-go"
 	"github.com/fox-one/pkg/uuid"
+
 	"github.com/gin-gonic/gin"
-	//"github.com/unrolled/secure"
+	"github.com/unrolled/secure"
+
 	uuid2 "github.com/gofrs/uuid"
 	"github.com/shopspring/decimal"
 )
@@ -42,14 +43,14 @@ func main() {
 	if err := json.NewDecoder(f_keystore).Decode(&store); err != nil {
 		log.Panicln(err)
 	}
-	
+
 	// Log Output
 	file, err := os.OpenFile("logs.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
-    	if err != nil {
-        	log.Fatal(err)
-    	}
+	if err != nil {
+		log.Fatal(err)
+	}
 	log.SetOutput(file)
-	
+
 	// 新建机器人实例
 	client, err := mixin.NewFromKeystore(&store)
 	checkErr(err)
@@ -58,19 +59,24 @@ func main() {
 	ctx := context.Background()
 
 	// 启动 gin http 服务器
-	r := gin.Default()
-	r.Use(middlewares.Cors())
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Hello World!",
-		})
-		fmt.Println(client)
-	})
-	
+	// r := gin.Default()
+	// r.Use(middlewares.Cors())
+	// r.GET("/", func(c *gin.Context) {
+	// 	c.JSON(http.StatusOK, gin.H{
+	// 		"message": "Hello World!",
+	// 	})
+	// 	fmt.Println(client)
+	// })
+
 	// HTTPS Support
-	//r := gin.Default()
-	//r.Use(TlsHandler())
-	//r.RunTLS("api.leaper.one:8080", ".pem", ".key")
+	r := gin.Default()
+	r.Use(TlsHandler())
+	r.GET("/", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "pong",
+		})
+	})
+	r.RunTLS(":8080", "./6395448_api.leaper.one.pem", "./6395448_api.leaper.one.key")
 
 	// 接收验证码并且跳转到相应网址
 	r.GET("/me", func(c *gin.Context) {
@@ -175,23 +181,23 @@ func main() {
 		})
 	})
 
-	r.Run(":8080")
+	// r.Run(":8080")
 }
 
-// // SSL Middleware For Https
-// func TlsHandler() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		secureMiddleware := secure.New(secure.Options{
-// 			SSLRedirect: true,
-// 			SSLHost: "api.leaper.one:8080",
-// 		})
-// 		err := secureMiddleware.Process(c.Writer, c.Request)
-// 		if err != nil {
-// 			return
-// 		}
-// 		c.Next()
-// 	}
-// }
+// SSL Middleware For Https
+func TlsHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		secureMiddleware := secure.New(secure.Options{
+			SSLRedirect: true,
+			SSLHost:     "api.leaper.one:8080",
+		})
+		err := secureMiddleware.Process(c.Writer, c.Request)
+		if err != nil {
+			return
+		}
+		c.Next()
+	}
+}
 
 func checkErr(err error) {
 	if err != nil {
