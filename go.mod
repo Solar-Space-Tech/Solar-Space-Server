@@ -16,11 +16,11 @@ require (
 	github.com/shopspring/decimal v1.2.0
 	github.com/ugorji/go v1.2.6 // indirect
 	github.com/vmihailenco/msgpack v4.0.4+incompatible
+	github.com/unrolled/secure v1.0.9
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/net v0.0.0-20210929193557-e81a3d93ecf6 // indirect
 	golang.org/x/sys v0.0.0-20211004093028-2c5d950f24ef // indirect
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	github.com/unrolled/secure 
 )
