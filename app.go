@@ -17,6 +17,7 @@ import (
 	mixin "github.com/fox-one/mixin-sdk-go"
 	"github.com/fox-one/pkg/uuid"
 	"github.com/gin-gonic/gin"
+	"github.com/unrolled/secure"
 	uuid2 "github.com/gofrs/uuid"
 	"github.com/shopspring/decimal"
 )
