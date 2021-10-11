@@ -17,7 +17,7 @@ import (
 	mixin "github.com/fox-one/mixin-sdk-go"
 	"github.com/fox-one/pkg/uuid"
 	"github.com/gin-gonic/gin"
-	"github.com/unrolled/secure"
+	//"github.com/unrolled/secure"
 	uuid2 "github.com/gofrs/uuid"
 	"github.com/shopspring/decimal"
 )
@@ -178,20 +178,20 @@ func main() {
 	r.Run(":8080")
 }
 
-// SSL Middleware For Https
-func TlsHandler() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		secureMiddleware := secure.New(secure.Options{
-			SSLRedirect: true,
-			SSLHost: "api.leaper.one:8080",
-		})
-		err := secureMiddleware.Process(c.Writer, c.Request)
-		if err != nil {
-			return
-		}
-		c.Next()
-	}
-}
+// // SSL Middleware For Https
+// func TlsHandler() gin.HandlerFunc {
+// 	return func(c *gin.Context) {
+// 		secureMiddleware := secure.New(secure.Options{
+// 			SSLRedirect: true,
+// 			SSLHost: "api.leaper.one:8080",
+// 		})
+// 		err := secureMiddleware.Process(c.Writer, c.Request)
+// 		if err != nil {
+// 			return
+// 		}
+// 		c.Next()
+// 	}
+// }
 
 func checkErr(err error) {
 	if err != nil {
