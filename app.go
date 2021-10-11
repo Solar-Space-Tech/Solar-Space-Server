@@ -41,7 +41,14 @@ func main() {
 	if err := json.NewDecoder(f_keystore).Decode(&store); err != nil {
 		log.Panicln(err)
 	}
-
+	
+	// Log Output
+	file, err := os.OpenFile("logs.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+    	if err != nil {
+        	log.Fatal(err)
+    	}
+	log.SetOutput(file)
+	
 	// 新建机器人实例
 	client, err := mixin.NewFromKeystore(&store)
 	checkErr(err)
