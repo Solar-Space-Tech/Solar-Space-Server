@@ -65,6 +65,11 @@ func main() {
 		})
 		fmt.Println(client)
 	})
+	
+	// HTTPS Support
+	//r := gin.Default()
+	//r.Use(TlsHandler())
+	//r.RunTLS("api.leaper.one:8080", ".pem", ".key")
 
 	// 接收验证码并且跳转到相应网址
 	r.GET("/me", func(c *gin.Context) {
@@ -170,6 +175,21 @@ func main() {
 	})
 
 	r.Run(":8080")
+}
+
+// SSL Middleware For Https
+func TlsHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		secureMiddleware := secure.New(secure.Options{
+			SSLRedirect: true,
+			SSLHost: "api.leaper.one:8080",
+		})
+		err := secureMiddleware.Process(c.Writer, c.Request)
+		if err != nil {
+			return
+		}
+		c.Next()
+	}
 }
 
 func checkErr(err error) {
