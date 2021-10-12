@@ -16,12 +16,27 @@ import (
 	mixin "github.com/fox-one/mixin-sdk-go"
 	"github.com/fox-one/pkg/uuid"
 
+	"html/template"
+
 	"github.com/gin-gonic/gin"
-	"github.com/unrolled/secure"
+
+	// "github.com/unrolled/secure"
 
 	uuid2 "github.com/gofrs/uuid"
 	"github.com/shopspring/decimal"
 )
+
+var html = template.Must(template.New("https").Parse(`
+<html>
+<head>
+  <title>Https Test</title>
+  <script src="/assets/app.js"></script>
+</head>
+<body>
+  <h1 style="color:red;">Hello, World!</h1>
+</body>
+</html>
+`))
 
 func main() {
 	// 读取配置文件
@@ -68,12 +83,28 @@ func main() {
 	// 	fmt.Println(client)
 	// })
 
-	// HTTPS Support
+	// // HTTPS Support
+	// r := gin.Default()
+	// r.Use(TlsHandler())
+	// r.GET("/", func(c *gin.Context) {
+	// 	c.JSON(200, gin.H{
+	// 		"message": "Hello",
+	// 	})
+	// })
+
 	r := gin.Default()
-	r.Use(TlsHandler())
+	r.Static("/assets", "./assets")
+	r.SetHTMLTemplate(html)
+
 	r.GET("/", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "Hello",
+		if pusher := c.Writer.Pusher(); pusher != nil {
+			// use pusher.Push() to do server push
+			if err := pusher.Push("/assets/app.js", nil); err != nil {
+				log.Printf("Failed to push: %v", err)
+			}
+		}
+		c.HTML(200, "https", gin.H{
+			"status": "success",
 		})
 	})
 
@@ -114,10 +145,11 @@ func main() {
 		checkErr(err)
 
 		//跳转到 return_to,携带 access token
-		c.Redirect(http.StatusMovedPermanently, "http://"+return_to+"/#/?access_token="+token)
+		c.Redirect(http.StatusMovedPermanently, "https://"+return_to+"/#/?access_token="+token)
 	})
 
 	r.GET("/api/test/query_uuid_by_phone", func(c *gin.Context) {
+
 		phone := c.Query("phone")
 		c.JSON(http.StatusOK, gin.H{
 			"uuid": db.Query_uuid_by_phone(phone),
@@ -185,20 +217,20 @@ func main() {
 	// r.Run(":8080")
 }
 
-// SSL Middleware For Https
-func TlsHandler() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		secureMiddleware := secure.New(secure.Options{
-			SSLRedirect: true,
-			SSLHost:     "api.leaper.one",
-		})
-		err := secureMiddleware.Process(c.Writer, c.Request)
-		if err != nil {
-			return
-		}
-		c.Next()
-	}
-}
+// // SSL Middleware For Https
+// func TlsHandler() gin.HandlerFunc {
+// 	return func(c *gin.Context) {
+// 		secureMiddleware := secure.New(secure.Options{
+// 			SSLRedirect: true,
+// 			SSLHost:     "api.leaper.one",
+// 		})
+// 		err := secureMiddleware.Process(c.Writer, c.Request)
+// 		if err != nil {
+// 			return
+// 		}
+// 		c.Next()
+// 	}
+// }
 
 func checkErr(err error) {
 	if err != nil {
