@@ -76,7 +76,6 @@ func main() {
 			"message": "pong",
 		})
 	})
-	r.RunTLS(":8080", "./6395448_api.leaper.one.pem", "./6395448_api.leaper.one.key")
 
 	// 接收验证码并且跳转到相应网址
 	r.GET("/me", func(c *gin.Context) {
@@ -180,6 +179,8 @@ func main() {
 			"t": decoded_memo.Timeout,
 		})
 	})
+
+	r.RunTLS(":8080", "./6395448_api.leaper.one.pem", "./6395448_api.leaper.one.key")
 
 	// r.Run(":8080")
 }
