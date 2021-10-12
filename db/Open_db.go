@@ -35,6 +35,16 @@ func Open_db() (*gorm.DB, error) {
 	return db, nil
 }
 
+func Sqlite_open_db() (*gorm.DB, error) {
+	db, err := gorm.Open("sqlite3", "node.db")
+	checkErr(err)
+	defer db.Close()
+
+	db.AutoMigrate() // TODO: schema needed
+	
+	return db, nil
+}
+
 func checkErr(err error) {
 	if err != nil {
 		log.Panicln(err)
