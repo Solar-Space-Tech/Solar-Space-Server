@@ -20,6 +20,6 @@ COPY . .
 RUN go build -installsuffix cgo .
 
 # 暴露端口
-EXPOSE 8080
+EXPOSE 443
 
 CMD ["./Solar-Space-Server"]

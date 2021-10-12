@@ -73,7 +73,7 @@ func main() {
 	r.Use(TlsHandler())
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{
-			"message": "pong",
+			"message": "Hello",
 		})
 	})
 
@@ -180,7 +180,7 @@ func main() {
 		})
 	})
 
-	r.RunTLS(":8080", "./6395448_api.leaper.one.pem", "./6395448_api.leaper.one.key")
+	r.RunTLS(":443", "./6395448_api.leaper.one.pem", "./6395448_api.leaper.one.key")
 
 	// r.Run(":8080")
 }
@@ -190,7 +190,7 @@ func TlsHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		secureMiddleware := secure.New(secure.Options{
 			SSLRedirect: true,
-			SSLHost:     "api.leaper.one:8080",
+			SSLHost:     "api.leaper.one",
 		})
 		err := secureMiddleware.Process(c.Writer, c.Request)
 		if err != nil {
