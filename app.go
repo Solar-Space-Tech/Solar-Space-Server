@@ -164,7 +164,9 @@ func main() {
 
 		amount, _ := decimal.NewFromString("10")
 		var threshold uint8 = 1
-		members := []string{client.ClientID, mixin.NewFromAccessToken(access_token).ClientID}
+		user, _ := mixin.NewFromAccessToken(access_token).UserMe(ctx)
+		members := []string{user.UserID, client.ClientID}
+		fmt.Printf("members: %v\n", members)
 		traceid := uuid.New()
 		timeout := "1321354"
 		code_id := mtg.TrustMTGPayment(client, CNB, traceid, timeout, amount, members, threshold)
