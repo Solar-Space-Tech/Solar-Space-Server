@@ -13,3 +13,10 @@ Create `db.json`, `keystore.json` and `pin&client_secret.json` as `*_example.jso
 $ go build
 $ ./Sollar-Space-Server
 ```
+
+# Use Docker to Deploy (Recommended)
+To Use Docker you need to install docker on your system
+```
+$ docker build -t sst .
+$ docker run -itd --name sst -p 443:443 sst
+```
