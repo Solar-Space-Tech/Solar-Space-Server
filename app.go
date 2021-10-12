@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 
 	db "Solar-Space-Server/db"
@@ -17,10 +16,8 @@ import (
 	"github.com/fox-one/pkg/uuid"
 
 	"html/template"
-
+	"net/http"
 	"github.com/gin-gonic/gin"
-
-	// "github.com/unrolled/secure"
 
 	uuid2 "github.com/gofrs/uuid"
 	"github.com/shopspring/decimal"
@@ -29,11 +26,11 @@ import (
 var html = template.Must(template.New("https").Parse(`
 <html>
 <head>
-  <title>Https Test</title>
+  <title>Solar-Space-Tech API</title>
   <script src="/assets/app.js"></script>
 </head>
 <body>
-  <h1 style="color:red;">Hello, World!</h1>
+  <h2 style="color:black;">Welcome to Solar-Space-Tech API Server</h2>
 </body>
 </html>
 `))
@@ -82,16 +79,8 @@ func main() {
 	// 	})
 	// 	fmt.Println(client)
 	// })
-
-	// // HTTPS Support
-	// r := gin.Default()
-	// r.Use(TlsHandler())
-	// r.GET("/", func(c *gin.Context) {
-	// 	c.JSON(200, gin.H{
-	// 		"message": "Hello",
-	// 	})
-	// })
-
+	
+	// HTTPS Support
 	r := gin.Default()
 	r.Static("/assets", "./assets")
 	r.SetHTMLTemplate(html)
@@ -216,21 +205,6 @@ func main() {
 
 	// r.Run(":8080")
 }
-
-// // SSL Middleware For Https
-// func TlsHandler() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		secureMiddleware := secure.New(secure.Options{
-// 			SSLRedirect: true,
-// 			SSLHost:     "api.leaper.one",
-// 		})
-// 		err := secureMiddleware.Process(c.Writer, c.Request)
-// 		if err != nil {
-// 			return
-// 		}
-// 		c.Next()
-// 	}
-// }
 
 func checkErr(err error) {
 	if err != nil {
