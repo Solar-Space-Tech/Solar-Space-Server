@@ -44,7 +44,7 @@ func If_old_user(uuid, phone string) bool {
 }
 
 // Get offset
-func Get_utxo(key string) (property.Value, error) {
+func (s *Property) Get_offset(key string) (property.Value, error) {
 	db, err := Sqlite_open_db()
 	checkErr(err)
 	defer db.Close()

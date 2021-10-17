@@ -1,115 +1,75 @@
 package mtg
 
 import (
+	"Solar-Space-Server/db"
 	"context"
-	// "encoding/json"
-	// "sync"
+	"errors"
+	"fmt"
 	"time"
 
-	"github.com/fox-one/mixin-sdk-go"
-	"github.com/fox-one/pando/core"
-	// "github.com/jinzhu/gorm"
-	// "github.com/jmoiron/sqlx/types"
+	// "github.com/fox-one/pando/core"
 )
 
-type walletService struct {
-	client    *mixin.Client
-	members   []string
-	threshold uint8
-	pin       string
+const checkpointKey = "sync_checkpoint"
+
+func New(
+	// wallets core.WalletStore,
+	walletz walletService,
+	property db.Property,
+) *Syncer {
+	return &Syncer{
+		// wallets: wallets,
+		walletz: walletz,
+		property: property,
+	}
 }
 
-func (s *walletService) Pull(ctx context.Context, offset time.Time, limit int) ([]*core.Output, error) {
-	outputs, err := s.client.ReadMultisigOutputs(ctx, s.members, s.threshold, offset, limit)
-	if err != nil {
-		return nil, err
-	}
-
-	results := make([]*core.Output, 0, len(outputs))
-	for _, output := range outputs {
-		result := convertToOutput(output)
-		results = append(results, result)
-	}
-
-	return results, nil
+type Syncer struct {
+	// wallets  core.WalletStore
+	walletz  walletService
+	property db.Property
 }
 
-// type walletStore struct {
-// 	db   *gorm.DB
-// 	once sync.Once
-// }
+func (w *Syncer) Run(ctx context.Context) error {
 
-// func save(db *gorm.DB, output *core.Output, ack bool) error {
-// 	tx := db.Update().Model(output).Where("trace_id = ?", output.TraceID).Updates(map[string]interface{}{
-// 		"state":     output.State,
-// 		"signed_tx": output.SignedTx,
-// 		"version":   gorm.Expr("version + 1"),
-// 	})
+	dur := time.Millisecond
 
-// 	if tx.Error != nil {
-// 		return tx.Error
-// 	}
-
-// 	if tx.RowsAffected == 0 {
-// 		if ack {
-// 			return db.Update().Create(output).Error
-// 		}
-
-// 		return saveRawOutput(db, output)
-// 	}
-
-// 	return nil
-// }
-
-// type RawOutput struct {
-// 	ID        int64          `sql:"PRIMARY_KEY" json:"id"`
-// 	CreatedAt int64          `json:"created_at"`
-// 	TraceID   string         `sql:"size:36" json:"trace_id"`
-// 	Version   int64          `sql:"not null" json:"version"`
-// 	Ack       types.BitBool  `sql:"type:bit(1)" json:"ack"`
-// 	Data      types.JSONText `sql:"type:TEXT" json:"data"`
-// }
-
-// func saveRawOutput(db *gorm.DB, output *core.Output) error {
-// 	data, _ := json.Marshal(output)
-
-// 	raw := &RawOutput{
-// 		CreatedAt: output.CreatedAt.UnixNano(),
-// 		TraceID:   output.TraceID,
-// 		Version:   1,
-// 		Data:      data,
-// 	}
-
-// 	tx := db.Update().Model(raw).
-// 		Where("trace_id = ?", raw.TraceID).
-// 		Updates(map[string]interface{}{
-// 			"data":    raw.Data,
-// 			"version": gorm.Expr("version + 1"),
-// 		})
-
-// 	if tx.Error != nil {
-// 		return tx.Error
-// 	}
-
-// 	if tx.RowsAffected == 0 {
-// 		return db.Update().Create(raw).Error
-// 	}
-
-// 	return nil
-// }
-
-func convertToOutput(utxo *mixin.MultisigUTXO) *core.Output {
-	return &core.Output{
-		CreatedAt:       utxo.CreatedAt,
-		UpdatedAt:       utxo.UpdatedAt,
-		TraceID:         utxo.UTXOID,
-		AssetID:         utxo.AssetID,
-		Amount:          utxo.Amount,
-		Sender:          utxo.Sender,
-		Memo:            utxo.Memo,
-		State:           utxo.State,
-		TransactionHash: utxo.TransactionHash.String(),
-		OutputIndex:     utxo.OutputIndex,
-		SignedTx:        utxo.SignedTx,
+	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case <-time.After(dur):
+			if err := w.run(ctx); err == nil {
+				dur = 100 * time.Millisecond
+			} else {
+				dur = 500 * time.Millisecond
+			}
+		}
 	}
+}
+
+func (w *Syncer) run(ctx context.Context) error {
+
+	v, err := w.property.Get_offset(checkpointKey)
+	checkErr(err)
+
+	offset := v.Time()
+
+	const limit = 500
+	outputs, err := w.walletz.Pull(ctx, offset, limit)
+	checkErr(err)
+
+	if len(outputs) == 0 {
+		return errors.New("EOF")
+	}
+
+	// log.Debugln("walletz.Pull", len(outputs), "outputs")
+
+	nextOffset := outputs[len(outputs)-1].UpdatedAt
+	end := len(outputs) < limit
+
+	fmt.Printf("nextOffset: %v\n", nextOffset)
+	fmt.Printf("end: %v\n", end)
+
+	return nil
 }
