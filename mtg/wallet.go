@@ -18,6 +18,7 @@ type walletService struct {
 	pin       string
 }
 
+// Get UTXOs from 'GET /multisigs'
 func (s *walletService) Pull(ctx context.Context, offset time.Time, limit int) ([]*core.Output, error) {
 	outputs, err := s.client.ReadMultisigOutputs(ctx, s.members, s.threshold, offset, limit)
 	if err != nil {

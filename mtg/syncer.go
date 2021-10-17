@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"time"
-
 	// "github.com/fox-one/pando/core"
 )
 
@@ -19,7 +18,7 @@ func New(
 ) *Syncer {
 	return &Syncer{
 		// wallets: wallets,
-		walletz: walletz,
+		walletz:  walletz,
 		property: property,
 	}
 }
@@ -65,11 +64,12 @@ func (w *Syncer) run(ctx context.Context) error {
 
 	// log.Debugln("walletz.Pull", len(outputs), "outputs")
 
-	nextOffset := outputs[len(outputs)-1].UpdatedAt
+	nextOffset := outputs[len(outputs)-1].UpdatedAt //TODO: Store nextOffset via property
 	end := len(outputs) < limit
 
 	fmt.Printf("nextOffset: %v\n", nextOffset)
 	fmt.Printf("end: %v\n", end)
 
+	// TODO: Store UTXO locally via wallets
 	return nil
 }

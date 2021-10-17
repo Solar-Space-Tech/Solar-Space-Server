@@ -43,7 +43,7 @@ func If_old_user(uuid, phone string) bool {
 	return false
 }
 
-// Get offset
+// Get last offset
 func (s *Property) Get_offset(key string) (property.Value, error) {
 	db, err := Sqlite_open_db()
 	checkErr(err)
