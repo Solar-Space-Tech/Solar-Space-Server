@@ -5,23 +5,19 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
 
 	db "Solar-Space-Server/db"
-
+	// "Solar-Space-Server/middlewares"
 	"Solar-Space-Server/mtg"
+	"Solar-Space-Server/util"
 
 	mixin "github.com/fox-one/mixin-sdk-go"
 	"github.com/fox-one/pkg/uuid"
-
-	"html/template"
-
 	"github.com/gin-gonic/gin"
-
-	// "github.com/unrolled/secure"
-
 	uuid2 "github.com/gofrs/uuid"
 	"github.com/shopspring/decimal"
 )
@@ -74,25 +70,8 @@ func main() {
 	ctx := context.Background()
 
 	// 启动 gin http 服务器
-	// r := gin.Default()
-	// r.Use(middlewares.Cors())
-	// r.GET("/", func(c *gin.Context) {
-	// 	c.JSON(http.StatusOK, gin.H{
-	// 		"message": "Hello World!",
-	// 	})
-	// 	fmt.Println(client)
-	// })
-
-	// // HTTPS Support
-	// r := gin.Default()
-	// r.Use(TlsHandler())
-	// r.GET("/", func(c *gin.Context) {
-	// 	c.JSON(200, gin.H{
-	// 		"message": "Hello",
-	// 	})
-	// })
-
 	r := gin.Default()
+	// r.Use(middlewares.Cors()) // 非 https 时需要
 	r.Static("/assets", "./assets")
 	r.SetHTMLTemplate(html)
 
@@ -149,7 +128,6 @@ func main() {
 	})
 
 	r.GET("/api/test/query_uuid_by_phone", func(c *gin.Context) {
-
 		phone := c.Query("phone")
 		c.JSON(http.StatusOK, gin.H{
 			"uuid": db.Query_uuid_by_phone(phone),
@@ -159,7 +137,9 @@ func main() {
 	r.POST("/api/test/deposit_to_multisign", func(c *gin.Context) {
 		json := make(map[string]interface{})
 		c.BindJSON(&json)
-		access_token := json["access_token"].(string)
+		// access_token := json["access_token"].(string)
+		access_token, err := util.GetAccessToken(c)
+		checkErr(err)
 		var CNB = "965e5c6e-434c-3fa9-b780-c50f43cd955c"
 
 		amount, _ := decimal.NewFromString("10")
@@ -179,7 +159,9 @@ func main() {
 	r.POST("/api/test/withdraw_from_multisign", func(c *gin.Context) {
 		json := make(map[string]interface{})
 		c.BindJSON(&json)
-		access_token := json["access_token"].(string)
+		// access_token := json["access_token"].(string)
+		access_token, err := util.GetAccessToken(c)
+		checkErr(err)
 		var CNB = "965e5c6e-434c-3fa9-b780-c50f43cd955c"
 
 		code_id := mtg.MTG_sign_test(client, access_token, CNB, "HI,MTG", pcs.Pin)
@@ -215,24 +197,8 @@ func main() {
 	})
 
 	r.RunTLS(":443", "./6395448_api.leaper.one.pem", "./6395448_api.leaper.one.key")
-
 	// r.Run(":8080")
 }
-
-// // SSL Middleware For Https
-// func TlsHandler() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		secureMiddleware := secure.New(secure.Options{
-// 			SSLRedirect: true,
-// 			SSLHost:     "api.leaper.one",
-// 		})
-// 		err := secureMiddleware.Process(c.Writer, c.Request)
-// 		if err != nil {
-// 			return
-// 		}
-// 		c.Next()
-// 	}
-// }
 
 func checkErr(err error) {
 	if err != nil {
