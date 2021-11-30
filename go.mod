@@ -17,7 +17,6 @@ require (
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/shopspring/decimal v1.2.0
 	github.com/ugorji/go v1.2.6 // indirect
-	github.com/unrolled/secure v1.0.9
 	github.com/vmihailenco/msgpack v4.0.4+incompatible
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/net v0.0.0-20210929193557-e81a3d93ecf6 // indirect
