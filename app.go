@@ -25,11 +25,11 @@ import (
 var html = template.Must(template.New("https").Parse(`
 <html>
 <head>
-  <title>Https Test</title>
+  <title>Solar-Space-Tech API</title>
   <script src="/assets/app.js"></script>
 </head>
 <body>
-  <h1 style="color:red;">Hello, World!</h1>
+  <h2 style="color:black;">Welcome to Solar-Space-Tech API Server</h2>
 </body>
 </html>
 `))
