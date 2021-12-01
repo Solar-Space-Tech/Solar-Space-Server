@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/base64"
-	"encoding/json"
 	"fmt"
 	"html/template"
 	"log"
@@ -35,26 +34,8 @@ var html = template.Must(template.New("https").Parse(`
 `))
 
 func main() {
-	// 读取配置文件
-	f_keystore, err := os.Open("./keystore.json")
-	checkErr(err)
-	f_pcs, err := os.Open("./pin&client_secret.json")
-	checkErr(err)
-
-	var (
-		pcs struct {
-			Pin           string `json:"pin"`
-			Client_secret string `json:"client_secret"`
-		}
-		store mixin.Keystore
-	)
-	if err := json.NewDecoder(f_pcs).Decode(&pcs); err != nil {
-		log.Panicln(err)
-	}
-	if err := json.NewDecoder(f_keystore).Decode(&store); err != nil {
-		log.Panicln(err)
-	}
-
+	store, err := util.StartMixin()
+	util.CheckErr(err)
 	// Log Output
 	file, err := os.OpenFile("logs.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
@@ -63,8 +44,8 @@ func main() {
 	log.SetOutput(file)
 
 	// 新建机器人实例
-	client, err := mixin.NewFromKeystore(&store)
-	checkErr(err)
+	client, err := mixin.NewFromKeystore(&store.Store)
+	util.CheckErr(err)
 	fmt.Println(client)
 
 	ctx := context.Background()
@@ -92,7 +73,7 @@ func main() {
 		code := c.Query("code")
 		return_to := c.Query("return_to")
 		// body := oauth.Oauth(code)
-		token, _, err := mixin.AuthorizeToken(ctx, store.ClientID, pcs.Client_secret, code, "")
+		token, _, err := mixin.AuthorizeToken(ctx, store.Store.ClientID, store.Client_secret, code, "")
 		if err != nil {
 			log.Printf("AuthorizeToken: %v", err)
 		}
@@ -100,7 +81,7 @@ func main() {
 
 		//获取用户信息
 		user, err := mixin.UserMe(ctx, token)
-		checkErr(err)
+		util.CheckErr(err)
 		fmt.Println("phone:", user.Phone)
 
 		// 判断是否为新用户
@@ -121,7 +102,7 @@ func main() {
 		}
 		// Send the msg
 		err = client.SendMessage(ctx, msg)
-		checkErr(err)
+		util.CheckErr(err)
 
 		//跳转到 return_to,携带 access token
 		c.Redirect(http.StatusMovedPermanently, "https://"+return_to+"/#/?access_token="+token)
@@ -139,7 +120,7 @@ func main() {
 		c.BindJSON(&json)
 		// access_token := json["access_token"].(string)
 		access_token, err := util.GetAccessToken(c)
-		checkErr(err)
+		util.CheckErr(err)
 		var CNB = "965e5c6e-434c-3fa9-b780-c50f43cd955c"
 
 		amount, _ := decimal.NewFromString("10")
@@ -161,10 +142,10 @@ func main() {
 		c.BindJSON(&json)
 		// access_token := json["access_token"].(string)
 		access_token, err := util.GetAccessToken(c)
-		checkErr(err)
+		util.CheckErr(err)
 		var CNB = "965e5c6e-434c-3fa9-b780-c50f43cd955c"
 
-		code_id := mtg.MTG_sign_test(client, access_token, CNB, "HI,MTG", pcs.Pin)
+		code_id := mtg.MTG_sign_test(client, access_token, CNB, "HI,MTG", store.Pin)
 
 		c.JSON(http.StatusOK, gin.H{
 			"code_id": code_id,
@@ -198,10 +179,4 @@ func main() {
 
 	r.RunTLS(":443", "./6395448_api.leaper.one.pem", "./6395448_api.leaper.one.key")
 	// r.Run(":8080")
-}
-
-func checkErr(err error) {
-	if err != nil {
-		log.Panicln(err)
-	}
 }
