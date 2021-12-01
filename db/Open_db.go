@@ -7,6 +7,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
 // db 对象可以 “ .Close() ”
@@ -32,6 +33,16 @@ func Open_db() (*gorm.DB, error) {
 
 	db.AutoMigrate(&User{}, &SubWallet{}) // Generate sheet by struct
 
+	return db, nil
+}
+
+func Sqlite_open_db() (*gorm.DB, error) {
+	db, err := gorm.Open("sqlite3", "node.db")
+	checkErr(err)
+	defer db.Close()
+
+	db.AutoMigrate() // TODO: schema needed
+	
 	return db, nil
 }
 

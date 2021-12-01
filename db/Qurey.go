@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 
+	"github.com/fox-one/pkg/property"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -40,4 +41,19 @@ func If_old_user(uuid, phone string) bool {
 		}
 	}
 	return false
+}
+
+// Get last offset
+func Get_offset(key string) (property.Value, error) {
+	db, err := Sqlite_open_db()
+	checkErr(err)
+	defer db.Close()
+
+	var p Property
+	// err := s.db.Where(tableName+".key = ?", key).First(&p).Error
+	err = db.Where("key = ?", key).First(&p).Error
+	if IsErrorNotFound(err) {
+		err = nil
+	}
+	return p.Value, err
 }
